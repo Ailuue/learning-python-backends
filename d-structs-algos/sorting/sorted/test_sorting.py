@@ -22,7 +22,7 @@ submit_cases = run_cases + [
 ]
 
 
-def test(input1, expected_output):
+def test(input1: list[Influencer], expected_output: list[Influencer]) -> bool:
     print("---------------------------------")
     print(f"Input:\n * {input1}")
     print(f"Expected: {expected_output}")
@@ -35,7 +35,7 @@ def test(input1, expected_output):
     return False
 
 
-def main():
+def main()-> None:
     passed = 0
     failed = 0
     skipped = len(submit_cases) - len(test_cases)
