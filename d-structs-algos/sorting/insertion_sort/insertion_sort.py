@@ -1,10 +1,8 @@
-def insertion_sort(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j] > key:
-            arr[j + 1] = arr[j]
+def insertion_sort(nums: list) -> list:
+    for i in range(1, len(nums)):
+        j = i
+        while j > 0 and nums[j - 1] > nums[j]:
+            nums[j], nums[j - 1] = nums[j - 1], nums[j]
             j -= 1
-        arr[j + 1] = key
-    return arr
+    return nums
     
