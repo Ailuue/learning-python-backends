@@ -11,6 +11,16 @@ class LinkedList:
         while node is not None:
             yield node
             node = node.next
+            
+    def add_to_tail(self, node):
+        if self.head is None:
+            self.head = node
+            return
+        last_node: Optional[Node] = None
+        for current_node in self:
+            last_node = current_node
+        assert last_node is not None
+        last_node.set_next(node)
 
     def __repr__(self):
         nodes = []
