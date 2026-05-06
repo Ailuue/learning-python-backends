@@ -5,7 +5,7 @@ from typing import Optional
 class LinkedList:
     def __init__(self):
         self.head: Optional[Node] = None
-
+        self.tail: Optional[Node] = None
     def __iter__(self):
         node = self.head
         while node is not None:
@@ -13,6 +13,8 @@ class LinkedList:
             node = node.next
             
     def add_to_head(self, node):
+        if self.head is None:
+            self.tail = node
         node.set_next(self.head)
         self.head = node
             
@@ -20,11 +22,9 @@ class LinkedList:
         if self.head is None:
             self.head = node
             return
-        last_node: Optional[Node] = None
-        for current_node in self:
-            last_node = current_node
-        assert last_node is not None
-        last_node.set_next(node)
+        assert self.tail is not None
+        self.tail.set_next(node)
+        self.tail = node
 
     def __repr__(self):
         nodes = []
