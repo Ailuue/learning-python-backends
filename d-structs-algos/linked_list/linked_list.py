@@ -25,6 +25,26 @@ class LinkedList:
         assert self.tail is not None
         self.tail.set_next(node)
         self.tail = node
+        
+    def remove_from_head(self):
+        if self.head is None:
+            return
+        removing = self.head  
+        self.head = self.head.next
+        if self.head == None:
+            self.tail = None
+        removing.set_next(None)
+        return removing
+    
+    def remove_from_tail(self):
+        if self.tail is None:
+            return
+        removing = self.tail
+        if self.head == self.tail:
+            self.head = None
+            self.tail = None
+            return removing
+        
 
     def __repr__(self):
         nodes = []
