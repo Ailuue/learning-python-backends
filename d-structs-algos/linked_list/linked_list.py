@@ -12,6 +12,10 @@ class LinkedList:
             yield node
             node = node.next
             
+    def add_to_head(self, node):
+        node.set_next(self.head)
+        self.head = node
+            
     def add_to_tail(self, node):
         if self.head is None:
             self.head = node
