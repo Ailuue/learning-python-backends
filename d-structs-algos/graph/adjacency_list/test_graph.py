@@ -41,6 +41,26 @@ dfs_submit_cases: list[tuple] = dfs_run_cases + [
     ([(0, 1), (1, 2), (2, 3), (3, 4)], 2, [2, 1, 0, 3, 4]),  # start mid-graph
 ]
 
+# ── adjacent_nodes ────────────────────────────────────────────────────────────
+
+adj_run_cases: list[tuple] = [
+    ([(0, 1), (0, 2), (1, 3)], 0, {1, 2}),
+    ([(0, 1), (0, 2), (1, 3)], 1, {0, 3}),
+]
+adj_submit_cases: list[tuple] = adj_run_cases + [
+    ([(0, 1), (0, 2), (1, 3)], 3, {1}),
+    ([(0, 1), (0, 2), (1, 3)], 9, None),   # node not in graph
+]
+
+# ── unconnected_vertices ──────────────────────────────────────────────────────
+
+unconnected_run_cases: list[tuple] = [
+    ([(0, 1), (1, 2)], []),                 # all nodes connected
+]
+unconnected_submit_cases: list[tuple] = unconnected_run_cases + [
+    ([(0, 1), (2, 3), (4, 5)], []),         # separate components, but each node has edges
+]
+
 
 def test_edge_exists(edges_to_add: list, edges_to_check: tuple) -> bool:
     print("=================================")
@@ -109,6 +129,26 @@ def test_dfs(edges_to_add: list, start: int, expected: list) -> bool:
         return False
 
 
+def test_adjacent_nodes(edges_to_add: list, node: int, expected) -> bool:
+    graph = Graph()
+    for edge in edges_to_add:
+        graph.add_edge(edge[0], edge[1])
+    actual = graph.adjacent_nodes(node)
+    ok = actual == expected
+    print(f"  adjacent_nodes({node}) → {actual} {'✓' if ok else '✗ expected ' + str(expected)}")
+    return ok
+
+
+def test_unconnected_vertices(edges_to_add: list, expected: list) -> bool:
+    graph = Graph()
+    for edge in edges_to_add:
+        graph.add_edge(edge[0], edge[1])
+    actual = graph.unconnected_vertices()
+    ok = actual == expected
+    print(f"  unconnected_vertices() → {actual} {'✓' if ok else '✗ expected ' + str(expected)}")
+    return ok
+
+
 def main() -> None:
     passed = 0
     failed = 0
@@ -134,6 +174,20 @@ def main() -> None:
         else:
             failed += 1
 
+    print("──── adjacent_nodes ─────────────")
+    for case in adj_cases:
+        if test_adjacent_nodes(*case):
+            passed += 1
+        else:
+            failed += 1
+
+    print("──── unconnected_vertices ───────")
+    for case in unconnected_cases:
+        if test_unconnected_vertices(*case):
+            passed += 1
+        else:
+            failed += 1
+
     if failed == 0:
         print("============= PASS ==============")
     else:
@@ -145,9 +199,13 @@ if "__RUN__" in globals():
     edge_cases = edge_run_cases
     bfs_cases = bfs_run_cases
     dfs_cases = dfs_run_cases
+    adj_cases = adj_run_cases
+    unconnected_cases = unconnected_run_cases
 else:
     edge_cases = edge_submit_cases
     bfs_cases = bfs_submit_cases
     dfs_cases = dfs_submit_cases
+    adj_cases = adj_submit_cases
+    unconnected_cases = unconnected_submit_cases
 
 main()

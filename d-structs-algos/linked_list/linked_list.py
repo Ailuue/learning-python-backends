@@ -21,6 +21,7 @@ class LinkedList:
     def add_to_tail(self, node):
         if self.head is None:
             self.head = node
+            self.tail = node
             return
         assert self.tail is not None
         self.tail.set_next(node)
@@ -44,7 +45,15 @@ class LinkedList:
             self.head = None
             self.tail = None
             return removing
-        
+        current = self.head
+        assert current is not None
+        while current.next is not self.tail:
+            assert current.next is not None
+            current = current.next
+        current.set_next(None)
+        self.tail = current
+        return removing
+
 
     def __repr__(self):
         nodes = []
