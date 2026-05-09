@@ -1,0 +1,819 @@
+export const BASE_URL = 'http://localhost:8000'
+
+export const GROUPS = [
+  {
+    id: 'basics',
+    label: 'Basics',
+    topics: [
+      {
+        id: 'first-steps',
+        number: '01',
+        title: 'First Steps',
+        description: 'Your first FastAPI path operation. Returns a simple JSON response from a GET request to the root path.',
+        docPath: '/tutorial/first-steps/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/',
+            label: 'Hello World',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'path-parameters',
+        number: '02',
+        title: 'Path Parameters',
+        description: 'Declare path parameters with Python type annotations. FastAPI validates and converts them automatically. Enum parameters restrict values to a fixed set.',
+        docPath: '/tutorial/path-params/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/items/{item_id}',
+            label: 'Integer path param',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '42', required: true },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/models/{model_name}',
+            label: 'Enum path param',
+            fields: [
+              { name: 'model_name', in: 'path', type: 'select', options: ['alexnet', 'resnet', 'lenet'], required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'query-parameters',
+        number: '03',
+        title: 'Query Parameters',
+        description: 'Function parameters not in the path become query parameters. They can be optional (with defaults) or required. Boolean query params accept true/false/1/0/on/off/yes/no.',
+        docPath: '/tutorial/query-params/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/items/',
+            label: 'List with skip & limit',
+            fields: [
+              { name: 'skip', in: 'query', type: 'number', placeholder: '0' },
+              { name: 'limit', in: 'query', type: 'number', placeholder: '10' },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/items/{item_id}/detail',
+            label: 'Optional query params',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'text', placeholder: 'foo', required: true },
+              { name: 'q', in: 'query', type: 'text', placeholder: 'search term' },
+              { name: 'short', in: 'query', type: 'select', options: ['false', 'true'] },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'request',
+    label: 'Request',
+    topics: [
+      {
+        id: 'request-body',
+        number: '04',
+        title: 'Request Body',
+        description: 'Send data from client to API using a request body. Declare it with a Pydantic model. FastAPI reads it from the request body, validates it, and gives you the parsed object.',
+        docPath: '/tutorial/body/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/items/create',
+            label: 'Create item (body)',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Widget",\n  "price": 9.99,\n  "tax": 0.5,\n  "tags": ["sale"]\n}' },
+            ],
+          },
+          {
+            method: 'PUT',
+            path: '/items/{item_id}/body',
+            label: 'Update item (path + body)',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Widget",\n  "price": 9.99\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'query-validations',
+        number: '05',
+        title: 'Query / String Validations',
+        description: 'Add validation and metadata to query parameters using Annotated + Query(). Set min_length, max_length, regex patterns. Use alias for parameter names with special chars.',
+        docPath: '/tutorial/query-params-str-validations/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/items/search/validated',
+            label: 'Validated query params',
+            fields: [
+              { name: 'q', in: 'query', type: 'text', placeholder: 'min 3 chars, letters only' },
+              { name: 'q-list', in: 'query', type: 'text', placeholder: 'item1,item2 (comma separated)' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'path-validations',
+        number: '06',
+        title: 'Path / Numeric Validations',
+        description: 'Add validation to path parameters using Annotated + Path(). Use ge, le, gt, lt for numeric constraints. Add metadata like title and description for OpenAPI docs.',
+        docPath: '/tutorial/path-params-numeric-validations/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/items/validated/{item_id}',
+            label: 'Validated path param (1–1000)',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '42 (must be 1–1000)', required: true },
+              { name: 'q', in: 'query', type: 'text', placeholder: 'optional' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'query-param-models',
+        number: '07',
+        title: 'Query Parameter Models',
+        description: 'Group related query parameters into a Pydantic model. Use model_config = {"extra": "forbid"} to reject unknown query params.',
+        docPath: '/tutorial/query-param-models/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/items/filter/model',
+            label: 'Filter model as query',
+            fields: [
+              { name: 'limit', in: 'query', type: 'number', placeholder: '10 (max 100)' },
+              { name: 'offset', in: 'query', type: 'number', placeholder: '0' },
+              { name: 'order_by', in: 'query', type: 'text', placeholder: 'created_at' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'body-multiple',
+        number: '08',
+        title: 'Body: Multiple Parameters',
+        description: 'Mix path, query, and multiple body parameters. Use Body() to embed singular values into the request body. FastAPI handles the merging automatically.',
+        docPath: '/tutorial/body-multiple-params/',
+        endpoints: [
+          {
+            method: 'PUT',
+            path: '/items/{item_id}/multi-body',
+            label: 'Multiple body models',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "item": {"name": "Foo", "price": 9.99},\n  "user": {"username": "alex"},\n  "importance": 5\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'body-fields',
+        number: '09',
+        title: 'Body: Fields',
+        description: 'Add validation and metadata to Pydantic model fields using Field(). Works like Query/Path but for model attributes. Use Body(embed=True) to wrap a single model in a key.',
+        docPath: '/tutorial/body-fields/',
+        endpoints: [
+          {
+            method: 'PUT',
+            path: '/items/{item_id}/fields',
+            label: 'Item with Field() validation',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "item": {\n    "name": "Widget",\n    "price": 9.99,\n    "description": "A nice widget"\n  }\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'body-nested',
+        number: '10',
+        title: 'Body: Nested Models',
+        description: 'Use Pydantic models inside other models for nested JSON. Use list[str], set[str], and other types for collection fields. Models can reference each other arbitrarily deep.',
+        docPath: '/tutorial/body-nested-models/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/items/nested',
+            label: 'Nested item with image',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Foo",\n  "price": 9.99,\n  "tags": ["cool", "new"],\n  "image": {"url": "http://example.com/img.png", "name": "hero"}\n}' },
+            ],
+          },
+          {
+            method: 'POST',
+            path: '/offers/',
+            label: 'Offer with list of items',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Summer Sale",\n  "price": 100,\n  "items": [\n    {"name": "Widget", "price": 9.99}\n  ]\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'request-example',
+        number: '11',
+        title: 'Declare Request Example Data',
+        description: 'Add example data to your schema using model_config json_schema_extra or Body(openapi_examples={}). Examples appear in the interactive Swagger UI docs.',
+        docPath: '/tutorial/schema-extra-example/',
+        endpoints: [
+          {
+            method: 'PUT',
+            path: '/items/{item_id}/example',
+            label: 'Item with schema examples',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Foo",\n  "description": "A very nice Item",\n  "price": 35.4,\n  "tax": 3.2\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'extra-data-types',
+        number: '12',
+        title: 'Extra Data Types',
+        description: 'FastAPI supports UUID, datetime, date, time, timedelta, Decimal, and more beyond basic Python types. These are serialized to/from standard JSON strings automatically.',
+        docPath: '/tutorial/extra-data-types/',
+        endpoints: [
+          {
+            method: 'PUT',
+            path: '/items/{item_id}/extra-types',
+            label: 'UUID + datetime + timedelta',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'text', placeholder: '550e8400-e29b-41d4-a716-446655440000', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "start_datetime": "2024-01-01T00:00:00",\n  "end_datetime": "2024-01-02T12:00:00",\n  "process_after": 3600\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'cookie-parameters',
+        number: '13',
+        title: 'Cookie Parameters',
+        description: 'Declare cookie parameters using Cookie() just like Query and Header. FastAPI reads them from the incoming request\'s Cookie header.',
+        docPath: '/tutorial/cookie-params/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/cookies/',
+            label: 'Read cookie (set ads_id manually)',
+            fields: [],
+            note: 'Set a cookie named "ads_id" in your browser DevTools to test. The endpoint reads it from the Cookie header.',
+          },
+        ],
+      },
+      {
+        id: 'header-parameters',
+        number: '14',
+        title: 'Header Parameters',
+        description: 'Declare header parameters using Header(). FastAPI converts underscores to hyphens automatically (user_agent → User-Agent). Duplicate headers return as lists.',
+        docPath: '/tutorial/header-params/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/headers/',
+            label: 'Read User-Agent & X-Token',
+            fields: [
+              { name: 'x-token', in: 'header', type: 'text', placeholder: 'my-secret-token' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'cookie-models',
+        number: '15',
+        title: 'Cookie Parameter Models',
+        description: 'Group related cookies into a Pydantic model with Cookie(). Use extra="forbid" to reject unknown cookies.',
+        docPath: '/tutorial/cookie-param-models/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/cookies/model',
+            label: 'Cookie model (requires browser cookies)',
+            fields: [],
+            note: 'Set cookies "session_id", "fatebook_tracker", "googler_tracker" in DevTools to test.',
+          },
+        ],
+      },
+      {
+        id: 'header-models',
+        number: '16',
+        title: 'Header Parameter Models',
+        description: 'Group related headers into a Pydantic model with Header(). Use extra="forbid" to reject unknown headers.',
+        docPath: '/tutorial/header-param-models/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/headers/model',
+            label: 'Header model',
+            fields: [
+              { name: 'save-data', in: 'header', type: 'select', options: ['false', 'true'] },
+              { name: 'x-tag', in: 'header', type: 'text', placeholder: 'tag1' },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'response',
+    label: 'Response',
+    topics: [
+      {
+        id: 'response-model',
+        number: '17',
+        title: 'Response Model',
+        description: 'Use response_model= to declare the output type. FastAPI filters the output — fields not in the model are stripped. Use response_model_exclude_unset=True to omit default values.',
+        docPath: '/tutorial/response-model/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/users/',
+            label: 'Create user (password stripped)',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "username": "alice",\n  "password": "secret123",\n  "email": "alice@example.com",\n  "full_name": "Alice"\n}' },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/items/{item_id}/response-model',
+            label: 'Item with exclude_unset (1 or 2)',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'extra-models',
+        number: '18',
+        title: 'Extra Models',
+        description: 'Use different models for input vs output (e.g., UserIn has password, UserOut doesn\'t). Use Union / | for endpoints that can return multiple model types.',
+        docPath: '/tutorial/extra-models/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/products/',
+            label: 'Create product (gets ID assigned)',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Gadget",\n  "price": 29.99\n}' },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/products/{product_id}',
+            label: 'Get product (optionally with stock)',
+            fields: [
+              { name: 'product_id', in: 'path', type: 'number', placeholder: '1', required: true },
+              { name: 'include_stock', in: 'query', type: 'select', options: ['false', 'true'] },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'response-status-code',
+        number: '19',
+        title: 'Response Status Code',
+        description: 'Set the HTTP status code with status_code= on the decorator. Use fastapi.status constants (HTTP_201_CREATED, HTTP_204_NO_CONTENT, etc.) for readability.',
+        docPath: '/tutorial/response-status-code/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/status/created',
+            label: 'Returns 201 Created',
+            fields: [],
+          },
+          {
+            method: 'DELETE',
+            path: '/status/delete/{item_id}',
+            label: 'Returns 204 No Content',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'forms-files',
+    label: 'Forms & Files',
+    topics: [
+      {
+        id: 'form-data',
+        number: '20',
+        title: 'Form Data',
+        description: 'Receive form fields using Form(). Requires python-multipart. Form data is encoded as application/x-www-form-urlencoded or multipart/form-data.',
+        docPath: '/tutorial/request-forms/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/login/',
+            label: 'Login with form fields',
+            fields: [
+              { name: 'username', in: 'form', type: 'text', placeholder: 'johndoe', required: true },
+              { name: 'password', in: 'form', type: 'text', placeholder: 'secret', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'form-models',
+        number: '21',
+        title: 'Form Models',
+        description: 'Group form fields into a Pydantic model using Form(). FastAPI reads each model field from the form data. Add extra="forbid" to reject unknown fields.',
+        docPath: '/tutorial/request-form-models/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/login/model',
+            label: 'Login with form model',
+            fields: [
+              { name: 'username', in: 'form', type: 'text', placeholder: 'johndoe', required: true },
+              { name: 'password', in: 'form', type: 'text', placeholder: 'secret', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'request-files',
+        number: '22',
+        title: 'Request Files',
+        description: 'Use File() for small files loaded into memory as bytes. Use UploadFile for large files — it uses a "spooled" temp file and exposes async read methods and metadata.',
+        docPath: '/tutorial/request-files/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/files/upload',
+            label: 'Upload bytes (File())',
+            fields: [
+              { name: 'file', in: 'file', type: 'file', required: true },
+            ],
+          },
+          {
+            method: 'POST',
+            path: '/files/uploadfile',
+            label: 'Upload UploadFile',
+            fields: [
+              { name: 'file', in: 'file', type: 'file', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'forms-and-files',
+        number: '23',
+        title: 'Request Forms and Files',
+        description: 'Mix file uploads and form fields in a single endpoint. Both are received as multipart/form-data. You can have multiple files and multiple form fields together.',
+        docPath: '/tutorial/request-forms-and-files/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/files/form-and-file',
+            label: 'File + form field',
+            fields: [
+              { name: 'file', in: 'file', type: 'file', required: true },
+              { name: 'token', in: 'form', type: 'text', placeholder: 'my-token', required: true },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'features',
+    label: 'Features',
+    topics: [
+      {
+        id: 'handling-errors',
+        number: '24',
+        title: 'Handling Errors',
+        description: 'Raise HTTPException to return error responses. Pass a detail string or dict. Add custom headers with the headers parameter. FastAPI returns proper HTTP error responses with JSON bodies.',
+        docPath: '/tutorial/handling-errors/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/errors/not-found/{item_id}',
+            label: '404 if item not in db (try 1, 2, 3 or 99)',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'number', placeholder: '1', required: true },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/errors/bad-request',
+            label: '400 if value < 0',
+            fields: [
+              { name: 'value', in: 'query', type: 'number', placeholder: '-1', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'path-operation-config',
+        number: '25',
+        title: 'Path Operation Configuration',
+        description: 'Add metadata to path operations: summary, description (docstring), response_description, tags, deprecated. These appear in the auto-generated OpenAPI docs.',
+        docPath: '/tutorial/path-operation-configuration/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/items/configured',
+            label: 'Fully configured path operation',
+            fields: [
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "name": "Foo",\n  "price": 9.99\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'json-encoder',
+        number: '26',
+        title: 'JSON Compatible Encoder',
+        description: 'jsonable_encoder() converts Pydantic models, datetimes, UUIDs etc. to JSON-compatible Python dicts/lists. Use it before storing data in pseudo-databases or passing to other libs.',
+        docPath: '/tutorial/encoder/',
+        endpoints: [
+          {
+            method: 'PUT',
+            path: '/encoder/items/{id}',
+            label: 'Store item (datetime encoded)',
+            fields: [
+              { name: 'id', in: 'path', type: 'text', placeholder: 'item1', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "title": "My Item",\n  "timestamp": "2024-01-15T10:30:00"\n}' },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/encoder/items/{id}',
+            label: 'Read stored item',
+            fields: [
+              { name: 'id', in: 'path', type: 'text', placeholder: 'item1', required: true },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'body-updates',
+        number: '27',
+        title: 'Body Updates (PUT & PATCH)',
+        description: 'PUT replaces an item fully. PATCH updates partially — use model_dump(exclude_unset=True) to get only the fields the client sent, then model_copy(update=...) to merge.',
+        docPath: '/tutorial/body-updates/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/patch/items/{item_id}',
+            label: 'Get stored item (try "foo" or "bar")',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'text', placeholder: 'foo', required: true },
+            ],
+          },
+          {
+            method: 'PATCH',
+            path: '/patch/items/{item_id}',
+            label: 'Partial update (PATCH)',
+            fields: [
+              { name: 'item_id', in: 'path', type: 'text', placeholder: 'foo', required: true },
+              { name: 'body', in: 'body', type: 'json', placeholder: '{\n  "price": 99.99\n}' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'dependencies',
+        number: '28',
+        title: 'Dependencies',
+        description: 'Dependency Injection with Depends(). Share logic across endpoints: common query params, DB connections, auth. FastAPI resolves the dependency tree automatically.',
+        docPath: '/tutorial/dependencies/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/deps/items/',
+            label: 'Items with common params',
+            fields: [
+              { name: 'q', in: 'query', type: 'text', placeholder: 'search' },
+              { name: 'skip', in: 'query', type: 'number', placeholder: '0' },
+              { name: 'limit', in: 'query', type: 'number', placeholder: '10' },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/deps/users/',
+            label: 'Users with same common params',
+            fields: [
+              { name: 'q', in: 'query', type: 'text', placeholder: 'search' },
+              { name: 'skip', in: 'query', type: 'number', placeholder: '0' },
+              { name: 'limit', in: 'query', type: 'number', placeholder: '10' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'security',
+        number: '29',
+        title: 'Security',
+        description: 'OAuth2 with Password flow. POST to /token with form data to get a token, then pass it as Bearer in Authorization header. FastAPI\'s OAuth2PasswordBearer dependency handles extraction.',
+        docPath: '/tutorial/security/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/security/token',
+            label: 'Get token (username: johndoe, password: secret)',
+            fields: [
+              { name: 'username', in: 'form', type: 'text', placeholder: 'johndoe', required: true },
+              { name: 'password', in: 'form', type: 'text', placeholder: 'secret', required: true },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/security/me',
+            label: 'Get current user (paste token above)',
+            fields: [
+              { name: 'authorization', in: 'header', type: 'text', placeholder: 'Bearer johndoe' },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'server',
+    label: 'Server',
+    topics: [
+      {
+        id: 'middleware',
+        number: '30',
+        title: 'Middleware',
+        description: 'Add custom logic before/after every request using @app.middleware("http"). The X-Process-Time header added by this app\'s middleware will appear in every response.',
+        docPath: '/tutorial/middleware/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/middleware/echo',
+            label: 'Check X-Process-Time in response headers',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'cors',
+        number: '31',
+        title: 'CORS',
+        description: 'Cross-Origin Resource Sharing — controls which origins can call your API from a browser. Add CORSMiddleware with allowed origins, methods, and headers.',
+        docPath: '/tutorial/cors/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/cors/info',
+            label: 'CORS configuration info',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'background-tasks',
+        number: '32',
+        title: 'Background Tasks',
+        description: 'Run tasks after returning the response using BackgroundTasks. The client gets the response immediately while the task runs in the background (same process, different thread).',
+        docPath: '/tutorial/background-tasks/',
+        endpoints: [
+          {
+            method: 'POST',
+            path: '/background/send-notification/{email}',
+            label: 'Trigger background task',
+            fields: [
+              { name: 'email', in: 'path', type: 'text', placeholder: 'user@example.com', required: true },
+            ],
+          },
+          {
+            method: 'GET',
+            path: '/background/task-log',
+            label: 'View task log',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'streaming',
+        number: '33',
+        title: 'Streaming / SSE',
+        description: 'Return StreamingResponse for streaming data. Use text/event-stream for Server-Sent Events or application/x-ndjson for streaming JSON lines.',
+        docPath: '/tutorial/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/stream/numbers',
+            label: 'SSE stream (numbers 0–9)',
+            fields: [],
+            streaming: true,
+          },
+          {
+            method: 'GET',
+            path: '/stream/json-lines',
+            label: 'JSON Lines stream',
+            fields: [],
+            streaming: true,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'reference',
+    label: 'Reference',
+    topics: [
+      {
+        id: 'metadata-docs',
+        number: '34',
+        title: 'Metadata & Docs URLs',
+        description: 'Set app title, description, version in FastAPI(). Customize docs URLs. FastAPI auto-generates /docs (Swagger UI) and /redoc. Access the raw OpenAPI schema at /openapi.json.',
+        docPath: '/tutorial/metadata/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/metadata/info',
+            label: 'App metadata',
+            fields: [],
+          },
+        ],
+        externalLinks: [
+          { label: 'Swagger UI', href: 'http://localhost:8000/docs' },
+          { label: 'ReDoc', href: 'http://localhost:8000/redoc' },
+          { label: 'OpenAPI JSON', href: 'http://localhost:8000/openapi.json' },
+        ],
+      },
+      {
+        id: 'static-files',
+        number: '35',
+        title: 'Static Files',
+        description: 'Mount a StaticFiles app to serve CSS, JS, images. Requires aiofiles. The mount path (e.g., /static) is excluded from the OpenAPI docs.',
+        docPath: '/tutorial/static-files/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/static/info',
+            label: 'Static files usage info',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'testing',
+        number: '36',
+        title: 'Testing',
+        description: 'Use TestClient from fastapi.testclient (wraps requests) to write synchronous tests for async FastAPI apps. Works with pytest out of the box.',
+        docPath: '/tutorial/testing/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/testing/info',
+            label: 'Testing info',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'bigger-apps',
+        number: '37',
+        title: 'Bigger Applications',
+        description: 'Split your app with APIRouter. Each router has its own prefix and tags. Include routers in the main app with app.include_router(). Use __init__.py for package structure.',
+        docPath: '/tutorial/bigger-applications/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/bigger-apps/info',
+            label: 'Bigger apps info',
+            fields: [],
+          },
+        ],
+      },
+      {
+        id: 'debugging',
+        number: '38',
+        title: 'Debugging',
+        description: 'Run uvicorn with --reload for hot-reload. Use import uvicorn; uvicorn.run(app) at the bottom of main.py to run directly with python main.py for IDE debugging.',
+        docPath: '/tutorial/debugging/',
+        endpoints: [
+          {
+            method: 'GET',
+            path: '/debugging/info',
+            label: 'Debugging info',
+            fields: [],
+          },
+        ],
+      },
+    ],
+  },
+]
+
+export const ALL_TOPICS = GROUPS.flatMap(g => g.topics)
