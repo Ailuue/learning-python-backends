@@ -27,6 +27,7 @@ import asyncio
 import base64
 import secrets
 import time
+from typing import TypeVar, Generic
 
 # ── Settings ──────────────────────────────────────────────────────────────────
 
@@ -568,9 +569,6 @@ async def generate_clients_info():
 
 
 # ── 24. Advanced Python Types ─────────────────────────────────────────────────
-
-from typing import TypeVar, Generic
-
 T = TypeVar("T")
 
 
