@@ -1,0 +1,626 @@
+[
+  {
+    "id": "responses",
+    "label": "Responses",
+    "topics": [
+      {
+        "id": "stream-data",
+        "number": "01",
+        "title": "Stream Data",
+        "description": "Return a StreamingResponse with an async generator. FastAPI streams each yielded chunk as it's produced — ideal for large files, SSE, and real-time data.",
+        "docPath": "/advanced/stream-data/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/stream/text",
+            "label": "Stream plain text chunks",
+            "fields": [],
+            "streaming": true
+          },
+          {
+            "method": "GET",
+            "path": "/stream/sse",
+            "label": "Stream SSE events",
+            "fields": [],
+            "streaming": true
+          }
+        ]
+      },
+      {
+        "id": "response-directly",
+        "number": "04",
+        "title": "Return a Response Directly",
+        "description": "Return a Response subclass (JSONResponse, HTMLResponse, etc.) directly instead of a dict. Useful when you need control over headers, status, or content-type that FastAPI wouldn't set automatically.",
+        "docPath": "/advanced/response-directly/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/response-directly/json",
+            "label": "JSONResponse with custom header",
+            "fields": []
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/response-directly/xml",
+            "label": "Raw XML response",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "custom-response",
+        "number": "05",
+        "title": "Custom Response",
+        "description": "Use response_class= on the decorator to change the default response type. HTMLResponse, PlainTextResponse, RedirectResponse, FileResponse — each sets the appropriate Content-Type.",
+        "docPath": "/advanced/custom-response/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/custom/html",
+            "label": "HTMLResponse",
+            "fields": []
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/custom/text",
+            "label": "PlainTextResponse",
+            "fields": []
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/custom/redirect",
+            "label": "RedirectResponse → /advanced/custom/text",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "additional-responses",
+        "number": "06",
+        "title": "Additional Responses in OpenAPI",
+        "description": "Document multiple possible response shapes using responses={} on the decorator. FastAPI adds them to the OpenAPI schema so clients know what to expect for each status code.",
+        "docPath": "/advanced/additional-responses/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/items/{item_id}",
+            "label": "Returns ItemOut (200) or ErrorOut (404)",
+            "fields": [
+              {
+                "name": "item_id",
+                "in": "path",
+                "type": "text",
+                "placeholder": "item-1 or missing-id",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "externalLinks": [
+          {
+            "label": "OpenAPI schema (see responses)",
+            "href": "http://localhost:8001/openapi.json"
+          }
+        ]
+      },
+      {
+        "id": "response-cookies",
+        "number": "07",
+        "title": "Response Cookies",
+        "description": "Set and delete cookies by accepting a Response parameter and calling response.set_cookie() / response.delete_cookie(). The Response object is injected by FastAPI without affecting your return value.",
+        "docPath": "/advanced/response-cookies/",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/advanced/cookies/set",
+            "label": "Set session_token cookie",
+            "fields": [
+              {
+                "name": "value",
+                "in": "query",
+                "type": "text",
+                "placeholder": "my-session-value"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/cookies/read",
+            "label": "Read session_token cookie",
+            "fields": [],
+            "note": "Set the cookie first, then read it. Browser must be on same origin as the backend."
+          },
+          {
+            "method": "POST",
+            "path": "/advanced/cookies/delete",
+            "label": "Delete session_token cookie",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "response-headers",
+        "number": "08",
+        "title": "Response Headers",
+        "description": "Add custom headers to responses using the injected Response parameter or by returning a Response object with headers={}. Custom headers appear in the response visible to clients.",
+        "docPath": "/advanced/response-headers/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/headers/custom",
+            "label": "X-Custom-Header + X-Request-Id",
+            "fields": []
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/headers/from-response-object",
+            "label": "Headers via JSONResponse(headers={})",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "response-change-status",
+        "number": "09",
+        "title": "Response - Change Status Code",
+        "description": "Dynamically override the status code at runtime by accepting a Response parameter and setting response.status_code. The decorator's status_code becomes the documented default.",
+        "docPath": "/advanced/response-change-status-code/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/status/dynamic",
+            "label": "Dynamic 200 or 404 based on query param",
+            "fields": [
+              {
+                "name": "found",
+                "in": "query",
+                "type": "select",
+                "options": [
+                  "true",
+                  "false"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "additional-status-codes",
+        "number": "03",
+        "title": "Additional Status Codes",
+        "description": "Return different status codes depending on logic by combining response_model with JSONResponse or by injecting the Response object. Useful for 200 vs 201 on upsert endpoints.",
+        "docPath": "/advanced/additional-status-codes/",
+        "endpoints": [
+          {
+            "method": "PUT",
+            "path": "/advanced/items/{item_id}",
+            "label": "200 if exists, 201 if created (try \"item-1\" vs \"new-item\")",
+            "fields": [
+              {
+                "name": "item_id",
+                "in": "path",
+                "type": "text",
+                "placeholder": "item-1",
+                "required": true
+              },
+              {
+                "name": "name",
+                "in": "query",
+                "type": "text",
+                "placeholder": "Widget"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "path-ops",
+    "label": "Path Operations",
+    "topics": [
+      {
+        "id": "path-op-advanced-config",
+        "number": "02",
+        "title": "Path Operation Advanced Configuration",
+        "description": "Set a custom operation_id (used in generated clients), exclude an endpoint from the OpenAPI schema with include_in_schema=False, or add arbitrary openapi_extra fields.",
+        "docPath": "/advanced/path-operation-advanced-configuration/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/path-config",
+            "label": "Custom operation_id + openapi_extra",
+            "fields": []
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/schema-info",
+            "label": "Info about the hidden endpoint",
+            "fields": []
+          }
+        ],
+        "externalLinks": [
+          {
+            "label": "OpenAPI JSON (find x-internal-note)",
+            "href": "http://localhost:8001/openapi.json"
+          },
+          {
+            "label": "Hidden endpoint (not in docs)",
+            "href": "http://localhost:8001/advanced/hidden"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deps-security",
+    "label": "Dependencies & Security",
+    "topics": [
+      {
+        "id": "advanced-dependencies",
+        "number": "10",
+        "title": "Advanced Dependencies",
+        "description": "Create parameterized dependencies by making a class with __call__. The class instance acts as the dependency, letting you configure behavior at the point of use.",
+        "docPath": "/advanced/advanced-dependencies/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/deps/short",
+            "label": "QueryChecker(min_length=3)",
+            "fields": [
+              {
+                "name": "q",
+                "in": "query",
+                "type": "text",
+                "placeholder": "hi (too short) or hello"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/deps/long",
+            "label": "QueryChecker(min_length=10)",
+            "fields": [
+              {
+                "name": "q",
+                "in": "query",
+                "type": "text",
+                "placeholder": "short vs longenough"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "http-basic-auth",
+        "number": "13",
+        "title": "HTTP Basic Auth",
+        "description": "Use HTTPBasic security scheme with Depends(). The browser sends credentials as Base64 in the Authorization header. Always use secrets.compare_digest() to prevent timing attacks.",
+        "docPath": "/advanced/security/http-basic-auth/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/basic-auth",
+            "label": "Basic Auth (admin / password123)",
+            "fields": [
+              {
+                "name": "authorization",
+                "in": "header",
+                "type": "text",
+                "placeholder": "Basic YWRtaW46cGFzc3dvcmQxMjM="
+              }
+            ],
+            "note": "Send Authorization: Basic <base64(admin:password123)>. The value above is pre-encoded."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "request-data",
+    "label": "Request & Data",
+    "topics": [
+      {
+        "id": "request-directly",
+        "number": "14",
+        "title": "Using the Request Directly",
+        "description": "Accept a Request parameter to access the raw request — URL, headers, query params, client IP, body bytes. Useful when you need data that FastAPI doesn't expose through typed params.",
+        "docPath": "/advanced/using-request-directly/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/request-info",
+            "label": "Inspect request metadata",
+            "fields": []
+          },
+          {
+            "method": "POST",
+            "path": "/advanced/request-body-bytes",
+            "label": "Read raw body bytes",
+            "fields": [
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\"raw\": \"anything here\"}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dataclasses",
+        "number": "15",
+        "title": "Using Dataclasses",
+        "description": "Use Python @dataclass instead of Pydantic BaseModel for request/response bodies. FastAPI converts them to JSON schemas automatically. Useful when you already have dataclasses in your codebase.",
+        "docPath": "/advanced/dataclasses/",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/advanced/dataclasses/item",
+            "label": "Create item using @dataclass",
+            "fields": [
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\n  \"name\": \"Widget\",\n  \"price\": 9.99,\n  \"tags\": [\"cool\"]\n}"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/advanced/dataclasses/items",
+            "label": "List items (response type is list[DataclassItem])",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "base64-bytes",
+        "number": "32",
+        "title": "JSON with Bytes as Base64",
+        "description": "Pydantic models with bytes fields are automatically encoded as Base64 strings in JSON. This lets you send/receive binary data through a standard JSON API.",
+        "docPath": "/advanced/json-base64-bytes/",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/advanced/base64/encode",
+            "label": "Send bytes, get Base64 back",
+            "fields": [
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\n  \"name\": \"my-file\",\n  \"data\": \"SGVsbG8gV29ybGQ=\"\n}"
+              }
+            ],
+            "note": "\"data\" must be a Base64-encoded string. \"SGVsbG8gV29ybGQ=\" = \"Hello World\""
+          },
+          {
+            "method": "POST",
+            "path": "/advanced/base64/round-trip",
+            "label": "See how FastAPI encodes bytes in JSON",
+            "fields": [
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\n  \"name\": \"test\",\n  \"data\": \"SGVsbG8gV29ybGQ=\"\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "python-types",
+        "number": "31",
+        "title": "Advanced Python Types",
+        "description": "Use Generic models (e.g. Paginated[T]) for typed, reusable response wrappers. FastAPI and Pydantic support Python's full type system including TypeVar and Generic.",
+        "docPath": "/advanced/advanced-python-types/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/python-types/paginated",
+            "label": "Generic Paginated[Item] response",
+            "fields": [
+              {
+                "name": "page",
+                "in": "query",
+                "type": "text",
+                "placeholder": "1"
+              },
+              {
+                "name": "page_size",
+                "in": "query",
+                "type": "text",
+                "placeholder": "3"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "app-structure",
+    "label": "App Structure",
+    "topics": [
+      {
+        "id": "advanced-middleware",
+        "number": "16",
+        "title": "Advanced Middleware",
+        "description": "Add middleware with @app.middleware(\"http\") for full request/response control. Or mount ASGI middleware directly. This app uses middleware to inject X-Process-Time into every response.",
+        "docPath": "/advanced/middleware/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/middleware/info",
+            "label": "Middleware info (check X-Process-Time header)",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "sub-applications",
+        "number": "17",
+        "title": "Sub Applications - Mounts",
+        "description": "Mount a separate FastAPI app at a path prefix using app.mount(). Each sub-app has its own OpenAPI schema and /docs. Useful for versioning (v1, v2) or plugin architecture.",
+        "docPath": "/advanced/sub-applications/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/sub-applications/info",
+            "label": "Sub-app info",
+            "fields": []
+          }
+        ],
+        "externalLinks": [
+          {
+            "label": "Sub-app root (mounted at /subapp)",
+            "href": "http://localhost:8001/subapp/"
+          },
+          {
+            "label": "Sub-app docs",
+            "href": "http://localhost:8001/subapp/docs"
+          }
+        ]
+      },
+      {
+        "id": "lifespan",
+        "number": "21",
+        "title": "Lifespan Events",
+        "description": "Use the lifespan async context manager to run startup/shutdown logic. Code before yield runs on startup; code after yield on shutdown. Replaces the older @app.on_event() approach.",
+        "docPath": "/advanced/events/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/lifespan/log",
+            "label": "View startup log",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "behind-proxy",
+        "number": "18",
+        "title": "Behind a Proxy",
+        "description": "When behind a reverse proxy (nginx, Traefik), set root_path so FastAPI generates correct OpenAPI URLs. Pass it via --root-path CLI flag or as a constructor argument.",
+        "docPath": "/advanced/behind-a-proxy/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/proxy/info",
+            "label": "Proxy & root_path info",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "settings",
+        "number": "26",
+        "title": "Settings and Environment Variables",
+        "description": "Use pydantic-settings BaseSettings to load config from environment variables. Fields are matched to env vars (with optional prefix). Great for 12-factor app config.",
+        "docPath": "/advanced/settings/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/settings",
+            "label": "Current app settings",
+            "fields": []
+          }
+        ],
+        "note": "Override with env vars: ADV_APP_NAME=\"My App\" ADV_DEBUG=true uvicorn ..."
+      }
+    ]
+  },
+  {
+    "id": "realtime",
+    "label": "Real-time",
+    "topics": [
+      {
+        "id": "websockets",
+        "number": "20",
+        "title": "WebSockets",
+        "description": "Accept WebSocket connections with @app.websocket(). Use await websocket.accept() then receive_text()/send_text() in a loop. Handle WebSocketDisconnect for clean disconnects.",
+        "docPath": "/advanced/websockets/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/websockets/info",
+            "label": "WebSocket endpoint info",
+            "fields": []
+          },
+          {
+            "path": "/ws/echo",
+            "ws": true,
+            "label": "Echo WebSocket (type a message)"
+          },
+          {
+            "path": "/ws/counter",
+            "ws": true,
+            "sendMessages": false,
+            "label": "Counter WebSocket (auto-sends 0–9)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "openapi",
+    "label": "OpenAPI",
+    "topics": [
+      {
+        "id": "openapi-callbacks",
+        "number": "27",
+        "title": "OpenAPI Callbacks",
+        "description": "Document the external HTTP requests your API makes back to the client (webhooks/callbacks) in the OpenAPI schema. Declare a callback router and pass it to the path operation.",
+        "docPath": "/advanced/openapi-callbacks/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/callbacks/info",
+            "label": "Callbacks info",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "openapi-webhooks",
+        "number": "28",
+        "title": "OpenAPI Webhooks",
+        "description": "Declare webhooks your API will send to client URLs. They appear under the \"webhooks\" key in the OpenAPI schema. Useful for documenting event-driven APIs.",
+        "docPath": "/advanced/openapi-webhooks/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/webhooks/info",
+            "label": "Webhooks info",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "id": "generate-clients",
+        "number": "30",
+        "title": "Generating Clients",
+        "description": "Point any OpenAPI codegen tool at /openapi.json to generate typed clients. Use unique operation_id values (or operationId in openapi_extra) to get clean method names.",
+        "docPath": "/advanced/generate-clients/",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/advanced/generate-clients/info",
+            "label": "Client generation info",
+            "fields": []
+          }
+        ],
+        "externalLinks": [
+          {
+            "label": "OpenAPI schema",
+            "href": "http://localhost:8001/openapi.json"
+          }
+        ]
+      }
+    ]
+  }
+]
