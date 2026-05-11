@@ -1,12 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
+from pydantic import BaseModel
 
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
     resnet = "resnet"
     lenet = "lenet"
+
+
+class Item(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
 
 
 app = FastAPI()
@@ -70,3 +78,17 @@ async def read_user_item(
 ):
     item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
     return item
+
+
+@app.post("/items/")
+async def create_item(item: Item):
+    item_dict = item.dict()
+    if item.tax:
+        total_price = item.price + item.tax
+        item_dict.update({"total_price": total_price})
+    return item_dict
+
+
+@app.put("/items/{item_id}")
+async def update_item(item_id: str, item: Item):
+    return {"item_id": item_id, **item.model_dump()}

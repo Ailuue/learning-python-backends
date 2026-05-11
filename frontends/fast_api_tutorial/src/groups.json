@@ -190,7 +190,7 @@
         "endpoints": [
           {
             "method": "POST",
-            "path": "/items/create",
+            "path": "/items",
             "label": "Create item (body)",
             "fields": [
               {
@@ -203,7 +203,7 @@
           },
           {
             "method": "PUT",
-            "path": "/items/{item_id}/body",
+            "path": "/items/{item_id}",
             "label": "Update item (path + body)",
             "fields": [
               {
