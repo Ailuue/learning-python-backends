@@ -257,7 +257,7 @@ html, body, #root {
   background: var(--bg-1);
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .playground-card-header {
@@ -472,7 +472,7 @@ select.field-input {
   color: var(--text-primary);
   overflow-x: auto;
   white-space: pre;
-  max-height: 320px;
+  max-height: min(65vh, 720px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--bg-3) transparent;
@@ -573,7 +573,7 @@ select.field-input {
   font-size: 12px;
   line-height: 1.8;
   color: var(--success);
-  max-height: 200px;
+  max-height: min(50vh, 500px);
   overflow-y: auto;
 }
 
