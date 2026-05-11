@@ -32,7 +32,11 @@ async def root():
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: int):
+async def read_item(item_id: str, q: str | None = None, short: bool = False):
+    if q:
+        return {"item_id": item_id, "q": q}
+    if not short:
+        return {"item_id": item_id, "short": short}
     return {"item_id": item_id}
 
 
