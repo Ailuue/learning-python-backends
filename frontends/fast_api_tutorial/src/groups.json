@@ -218,6 +218,12 @@
                 "in": "body",
                 "type": "json",
                 "placeholder": "{\n  \"name\": \"Widget\",\n  \"price\": 9.99\n}"
+              },
+              {
+                "name": "q",
+                "in": "query",
+                "type": "text",
+                "placeholder": "search term"
               }
             ]
           }
