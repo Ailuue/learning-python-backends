@@ -238,7 +238,7 @@
         "endpoints": [
           {
             "method": "GET",
-            "path": "/items/search/validated",
+            "path": "/items/limited/",
             "label": "Validated query params",
             "fields": [
               {
@@ -252,6 +252,19 @@
                 "in": "query",
                 "type": "text",
                 "placeholder": "item1,item2 (comma separated)"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/items/media/",
+            "label": "Validated query params",
+            "fields": [
+              {
+                "name": "item_id",
+                "in": "query",
+                "type": "text",
+                "placeholder": "isbn or imdb"
               }
             ]
           }
@@ -273,14 +286,20 @@
                 "name": "item_id",
                 "in": "path",
                 "type": "number",
-                "placeholder": "42 (must be 1–1000)",
+                "placeholder": "item id between 1 and 1000",
                 "required": true
               },
               {
-                "name": "q",
+                "name": "item-query",
                 "in": "query",
                 "type": "text",
                 "placeholder": "optional"
+              },
+              {
+                "name": "size",
+                "in": "query",
+                "type": "number",
+                "placeholder": "size between 0 and 10.5"
               }
             ]
           }
@@ -315,6 +334,12 @@
                 "in": "query",
                 "type": "text",
                 "placeholder": "created_at"
+              },
+              {
+                "name": "tags",
+                "in": "query",
+                "type": "text",
+                "placeholder": "tag1,tag2 (comma separated)"
               }
             ]
           }
@@ -329,7 +354,7 @@
         "endpoints": [
           {
             "method": "PUT",
-            "path": "/items/{item_id}/multi-body",
+            "path": "/items/allparams/{item_id}",
             "label": "Multiple body models",
             "fields": [
               {
@@ -338,6 +363,12 @@
                 "type": "number",
                 "placeholder": "1",
                 "required": true
+              },
+              {
+                "name": "q",
+                "in": "query",
+                "type": "text",
+                "placeholder": "search term"
               },
               {
                 "name": "body",
@@ -542,6 +573,18 @@
                 "in": "header",
                 "type": "select",
                 "options": ["false", "true"]
+              },
+              {
+                "name": "if_modified_since",
+                "in": "header",
+                "type": "text",
+                "placeholder": "Wed, 21 Oct 2024 07:28:00 GMT"
+              },
+              {
+                "name": "traceparent",
+                "in": "header",
+                "type": "text",
+                "placeholder": "version-traceid-parentid-traceflags"
               },
               {
                 "name": "x-tag",
@@ -781,6 +824,12 @@
             "fields": [
               {
                 "name": "file",
+                "in": "file",
+                "type": "file",
+                "required": true
+              },
+              {
+                "name": "fileb",
                 "in": "file",
                 "type": "file",
                 "required": true

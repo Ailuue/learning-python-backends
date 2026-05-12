@@ -123,7 +123,7 @@ export default function ApiPlayground({ endpoint }) {
     const t0 = performance.now()
     try {
       if (endpoint.streaming) {
-        const res = await fetch(url, { method, headers })
+        const res = await fetch(url, { method, headers, credentials: 'include' })
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
         const elapsed = Math.round(performance.now() - t0)
@@ -135,7 +135,7 @@ export default function ApiPlayground({ endpoint }) {
           setStreamLines(l => [...l, text.trim()])
         }
       } else {
-        const res = await fetch(url, { method, headers, body })
+        const res = await fetch(url, { method, headers, body, credentials: 'include' })
         const elapsed = Math.round(performance.now() - t0)
         let data
         const contentType = res.headers.get('content-type') ?? ''

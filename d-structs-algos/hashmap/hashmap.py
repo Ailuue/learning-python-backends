@@ -62,6 +62,6 @@ class HashMap:
     def __repr__(self):
         final = ""
         for i, v in enumerate(self.hashmap):
-            if v != None:
+            if v is not None:
                 final += f" - {str(v)}\n"
         return final
