@@ -1,4 +1,5 @@
-from linked_list import *
+from linked_list import LinkedList
+from node import Node
 
 run_cases = [
     (["A", "B", "C"], "head", "A", ["B", "C"], "B", "C"),

@@ -1,4 +1,4 @@
-from node import *
+from node import Node
 
 run_cases = [
     ("Anton Chigurh", ["Llewelyn Moss", "Anton Chigurh"]),

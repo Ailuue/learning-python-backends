@@ -1,4 +1,4 @@
-from subset_sum import *
+from subset_sum import subset_sum
 
 run_cases = [
     ([3, 34, 4, 12, 5, 2], 9, True),

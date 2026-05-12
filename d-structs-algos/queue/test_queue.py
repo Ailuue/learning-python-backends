@@ -1,4 +1,4 @@
-from custom_queue import *
+from custom_queue import Queue
 
 run_cases = [
     ([], None),

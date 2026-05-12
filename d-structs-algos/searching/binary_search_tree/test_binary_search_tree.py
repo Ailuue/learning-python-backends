@@ -1,5 +1,5 @@
-from binary_search_tree import *
-from user import *
+from binary_search_tree import binary_search_tree_node
+from user import get_users
 
 # ── insert + inorder (sorted property) ───────────────────────────────────────
 

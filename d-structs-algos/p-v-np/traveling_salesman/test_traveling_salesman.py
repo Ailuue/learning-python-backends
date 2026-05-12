@@ -1,4 +1,4 @@
-from traveling_salesman import *
+from traveling_salesman import tsp
 
 run_cases = [
     ([0, 1], [[0, 394], [394, 0]], 3458, True),

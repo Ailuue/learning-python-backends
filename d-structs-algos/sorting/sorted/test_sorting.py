@@ -1,4 +1,4 @@
-from sorting import *
+from sorting import Influencer, vanity_sort
 
 theprimeagen = Influencer(100, 1)
 pokimane = Influencer(800, 2)

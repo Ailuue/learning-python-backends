@@ -1,4 +1,4 @@
-from bubble_sort import *
+from bubble_sort import bubble_sort
 
 run_cases = [
     ([5, 7, 3, 6, 8], [3, 5, 6, 7, 8]),

@@ -1,5 +1,5 @@
-from red_black_tree import *
-from user import *
+from red_black_tree import RBTree
+from user import get_users
 
 run_cases = [
     (4),

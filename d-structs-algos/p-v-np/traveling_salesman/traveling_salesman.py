@@ -9,7 +9,11 @@ def tsp(cities, paths, dist):
     return False
 
 
-# don't touch below this line
+def verify_tsp(paths, dist, actual_path):
+    total_dist = 0
+    for i in range(len(actual_path) - 1):
+        total_dist += paths[actual_path[i]][actual_path[i + 1]]
+    return total_dist <= dist
 
 
 def permutations(arr):

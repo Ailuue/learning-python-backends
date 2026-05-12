@@ -1,6 +1,7 @@
 import random
 import time
-from linked_list import *
+from linked_list import LinkedList
+from node import Node
 
 run_cases = [
     (10, "Patrick Bateman", "Paul Allen"),

@@ -1,4 +1,4 @@
-from hashmap import *
+from hashmap import HashMap
 
 run_cases = [
     (

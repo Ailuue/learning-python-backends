@@ -1,4 +1,4 @@
-from quick_sort import *
+from quick_sort import quick_sort
 import time
 
 run_cases = [

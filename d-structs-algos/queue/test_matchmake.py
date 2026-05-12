@@ -1,4 +1,5 @@
-from matchmake import *
+from custom_queue import Queue
+from matchmake import matchmake
 
 run_cases = [
     [("Ted", "join"), (["Ted"], "No match found")],

@@ -1,4 +1,4 @@
-from stack import *
+from stack import Stack
 
 run_cases = [
     (["a", "b", "c"], 3),

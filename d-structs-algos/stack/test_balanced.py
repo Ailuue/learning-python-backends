@@ -1,4 +1,4 @@
-from balanced import *
+from balanced import is_balanced
 
 run_cases = [
     ("(", False),

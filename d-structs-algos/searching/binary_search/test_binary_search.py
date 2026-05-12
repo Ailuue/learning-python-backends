@@ -1,4 +1,4 @@
-from binary_search import *
+from binary_search import binary_search
 import time
 
 run_cases = [

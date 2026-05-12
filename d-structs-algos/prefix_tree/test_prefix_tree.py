@@ -1,4 +1,4 @@
-from prefix_tree import *
+from prefix_tree import PrefixTree
 
 # ── exists ────────────────────────────────────────────────────────────────────
 
