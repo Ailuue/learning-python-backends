@@ -1135,8 +1135,97 @@
         ]
       },
       {
-        "id": "background-tasks",
+        "id": "sql-databases",
         "number": "32",
+        "title": "SQL Databases",
+        "description": "Integrate a SQL database using SQLModel (built on SQLAlchemy + Pydantic). Define table models, use Session as a dependency, and build full CRUD endpoints. secret_name is stored but never returned — a pattern that applies to passwords too.",
+        "docPath": "/tutorial/sql-databases/",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/heroes/",
+            "label": "Create hero",
+            "fields": [
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\n  \"name\": \"Deadpond\",\n  \"secret_name\": \"Dive Wilson\",\n  \"age\": 35\n}"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/heroes/",
+            "label": "List heroes",
+            "fields": [
+              {
+                "name": "offset",
+                "in": "query",
+                "type": "number",
+                "placeholder": "0"
+              },
+              {
+                "name": "limit",
+                "in": "query",
+                "type": "number",
+                "placeholder": "10"
+              }
+            ]
+          },
+          {
+            "method": "GET",
+            "path": "/heroes/{hero_id}",
+            "label": "Get hero by ID",
+            "fields": [
+              {
+                "name": "hero_id",
+                "in": "path",
+                "type": "number",
+                "placeholder": "1",
+                "required": true
+              }
+            ]
+          },
+          {
+            "method": "PATCH",
+            "path": "/heroes/{hero_id}",
+            "label": "Update hero (partial)",
+            "fields": [
+              {
+                "name": "hero_id",
+                "in": "path",
+                "type": "number",
+                "placeholder": "1",
+                "required": true
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "type": "json",
+                "placeholder": "{\n  \"age\": 30\n}"
+              }
+            ]
+          },
+          {
+            "method": "DELETE",
+            "path": "/heroes/{hero_id}",
+            "label": "Delete hero",
+            "fields": [
+              {
+                "name": "hero_id",
+                "in": "path",
+                "type": "number",
+                "placeholder": "1",
+                "required": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "background-tasks",
+        "number": "33",
         "title": "Background Tasks",
         "description": "Run tasks after returning the response using BackgroundTasks. The client gets the response immediately while the task runs in the background (same process, different thread).",
         "docPath": "/tutorial/background-tasks/",
@@ -1165,7 +1254,7 @@
       },
       {
         "id": "streaming",
-        "number": "33",
+        "number": "34",
         "title": "Streaming / SSE",
         "description": "Return StreamingResponse for streaming data. Use text/event-stream for Server-Sent Events or application/x-ndjson for streaming JSON lines.",
         "docPath": "/tutorial/",
@@ -1194,7 +1283,7 @@
     "topics": [
       {
         "id": "metadata-docs",
-        "number": "34",
+        "number": "35",
         "title": "Metadata & Docs URLs",
         "description": "Set app title, description, version in FastAPI(). Customize docs URLs. FastAPI auto-generates /docs (Swagger UI) and /redoc. Access the raw OpenAPI schema at /openapi.json.",
         "docPath": "/tutorial/metadata/",
@@ -1223,7 +1312,7 @@
       },
       {
         "id": "static-files",
-        "number": "35",
+        "number": "36",
         "title": "Static Files",
         "description": "Mount a StaticFiles app to serve CSS, JS, images. Requires aiofiles. The mount path (e.g., /static) is excluded from the OpenAPI docs.",
         "docPath": "/tutorial/static-files/",
@@ -1238,7 +1327,7 @@
       },
       {
         "id": "testing",
-        "number": "36",
+        "number": "37",
         "title": "Testing",
         "description": "Use TestClient from fastapi.testclient (wraps requests) to write synchronous tests for async FastAPI apps. Works with pytest out of the box.",
         "docPath": "/tutorial/testing/",
@@ -1253,7 +1342,7 @@
       },
       {
         "id": "bigger-apps",
-        "number": "37",
+        "number": "38",
         "title": "Bigger Applications",
         "description": "Split your app with APIRouter. Each router has its own prefix and tags. Include routers in the main app with app.include_router(). Use __init__.py for package structure.",
         "docPath": "/tutorial/bigger-applications/",
@@ -1268,7 +1357,7 @@
       },
       {
         "id": "debugging",
-        "number": "38",
+        "number": "39",
         "title": "Debugging",
         "description": "Run uvicorn with --reload for hot-reload. Use import uvicorn; uvicorn.run(app) at the bottom of main.py to run directly with python main.py for IDE debugging.",
         "docPath": "/tutorial/debugging/",
