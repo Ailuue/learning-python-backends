@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     environment: str = "development"
 
+    redis_url: str = "redis://localhost:6379/0"
+    ratelimit_storage_uri: str = "redis://localhost:6379/0"
+    celery_broker_url: str = "redis://localhost:6379/1"
+    celery_result_backend: str = "redis://localhost:6379/1"
+
 
 @lru_cache
 def get_settings() -> Settings:
