@@ -8,7 +8,6 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
-from app.database import create_db_and_tables
 from app.exceptions import register_exception_handlers
 from app.logging_config import configure_logging
 from app.rate_limit import limiter
@@ -21,7 +20,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting bookmark manager API")
-    create_db_and_tables()
+    # Schema is managed by Alembic: `alembic upgrade head` before starting the app.
     yield
     logger.info("Shutting down bookmark manager API")
 
