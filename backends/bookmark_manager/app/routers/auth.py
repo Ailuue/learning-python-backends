@@ -40,7 +40,7 @@ def register(request: Request, user_in: UserCreate, session: SessionDep) -> User
     user = User(
         email=user_in.email,
         username=user_in.username,
-        hashed_password=hash_password(user_in.password),
+        password_hash=hash_password(user_in.password),
     )
     session.add(user)
     session.commit()
@@ -57,7 +57,7 @@ def login(
     session: SessionDep,
 ) -> Token:
     user = session.exec(select(User).where(User.username == form_data.username)).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(form_data.password, user.password_hash):
         logger.warning("Failed login attempt for username: %s", form_data.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
