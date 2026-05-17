@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True, max_length=255)
+    first_name: str = Field(max_length=20)
+    last_name: str = Field(max_length=20)
     username: str = Field(unique=True, index=True, min_length=3, max_length=50)
     password_hash: str
     is_active: bool = True
