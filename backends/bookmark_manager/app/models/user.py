@@ -19,11 +19,14 @@ class User(SQLModel, table=True):
     is_active: bool = True
     is_admin: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
+    default_category_id: int | None = Field(
+        default=None, foreign_key="category.id", ondelete="SET NULL"
+    )
     bookmarks: list["Bookmark"] = Relationship(
         back_populates="user", cascade_delete=True
     )
     categories: list["Category"] = Relationship(
         back_populates="user", cascade_delete=True
     )
+
     tags: list["Tag"] = Relationship(back_populates="user", cascade_delete=True)
