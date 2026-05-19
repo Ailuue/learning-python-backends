@@ -20,7 +20,7 @@ class Bookmark(SQLModel, table=True):
     click_count: int = Field(default=0, nullable=False)
     user_id: int = Field(foreign_key="user.id", index=True, ondelete="CASCADE")
     category_id: int | None = Field(
-        default=None, foreign_key="category.id", index=True, ondelete="SET NULL"
+        default=None, foreign_key="category.id", index=True, ondelete="CASCADE"
     )
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
