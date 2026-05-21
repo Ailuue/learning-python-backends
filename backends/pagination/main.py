@@ -71,7 +71,7 @@ def list_articles_offset(
         .limit(limit)
     ).all()
 
-    total_pages = math.ceil(total / limit)
+    total_pages = math.ceil((total or 0) / limit)
 
     return {
         "data": [

@@ -1,5 +1,7 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.orm import DeclarativeBase, relationship
+from datetime import datetime
+
+from sqlalchemy import ForeignKey, String, Text, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -9,23 +11,25 @@ class Base(DeclarativeBase):
 class Article(Base):
     __tablename__ = "articles"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String(200), nullable=False)
-    body = Column(Text, nullable=False)
-    author = Column(String(100), nullable=False)
-    published_at = Column(DateTime, server_default=func.now(), nullable=False)
-    view_count = Column(Integer, default=0, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(200))
+    body: Mapped[str] = mapped_column(Text)
+    author: Mapped[str] = mapped_column(String(100))
+    published_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    view_count: Mapped[int] = mapped_column(default=0)
 
-    comments = relationship("Comment", back_populates="article", cascade="all, delete-orphan")
+    comments: Mapped[list["Comment"]] = relationship(
+        back_populates="article", cascade="all, delete-orphan"
+    )
 
 
 class Comment(Base):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True)
-    article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
-    author = Column(String(100), nullable=False)
-    body = Column(Text, nullable=False)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
+    author: Mapped[str] = mapped_column(String(100))
+    body: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    article = relationship("Article", back_populates="comments")
+    article: Mapped["Article"] = relationship(back_populates="comments")
