@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Text
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -9,8 +9,8 @@ class Base(DeclarativeBase):
 class Author(Base):
     __tablename__ = "authors"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
     birth_year = Column(Integer)
 
     books = relationship("Book", back_populates="author", cascade="all, delete-orphan")
@@ -22,12 +22,14 @@ class Author(Base):
 class Book(Base):
     __tablename__ = "books"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String(200), nullable=False)
-    author_id = Column(Integer, ForeignKey("authors.id"), nullable=False)
-    published_year = Column(Integer)
-    genre = Column(String(50))
-    summary = Column(Text)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    author_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("authors.id"), nullable=False
+    )
+    published_year: Mapped[int] = mapped_column(Integer)
+    genre: Mapped[str] = mapped_column(String(50))
+    summary: Mapped[str] = mapped_column(Text)
 
     author = relationship("Author", back_populates="books")
 
