@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, relationship
@@ -21,7 +19,9 @@ class User(Base):
     email = Column(String(200), nullable=False, unique=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
-    comments = relationship("Comment", back_populates="user", cascade="all, delete-orphan")
+    comments = relationship(
+        "Comment", back_populates="user", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<User(username={self.username!r})>"
