@@ -7,10 +7,11 @@ Strategy:
   3. After inserting, reset Postgres sequences so auto-increment continues
      from the right value (SQLite doesn't use sequences, Postgres does).
 """
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from models import Base, Author, Book
+from models import Author, Book
 
 SQLITE_URL = "sqlite:///./library.db"
 POSTGRES_URL = "postgresql+psycopg2://alex@localhost/library"
@@ -56,10 +57,12 @@ print("Data inserted into PostgreSQL.")
 
 with pg_engine.connect() as conn:
     for table, col in [("authors", "id"), ("books", "id")]:
-        conn.execute(text(
-            f"SELECT setval(pg_get_serial_sequence('{table}', '{col}'), "
-            f"COALESCE(MAX({col}), 0) + 1, false) FROM {table}"
-        ))
+        conn.execute(
+            text(
+                f"SELECT setval(pg_get_serial_sequence('{table}', '{col}'), "
+                f"COALESCE(MAX({col}), 0) + 1, false) FROM {table}"
+            )
+        )
     conn.commit()
 
 print("Postgres sequences reset — auto-increment will continue from the right value.")
@@ -68,7 +71,9 @@ print("Postgres sequences reset — auto-increment will continue from the right 
 
 pg_authors = pg_session.query(Author).all()
 pg_books = pg_session.query(Book).all()
-print(f"\nVerification — Postgres now has {len(pg_authors)} authors and {len(pg_books)} books:")
+print(
+    f"\nVerification — Postgres now has {len(pg_authors)} authors and {len(pg_books)} books:"
+)
 for author in pg_authors:
     author_books = [b.title for b in pg_books if b.author_id == author.id]
     print(f"  {author.name} ({author.birth_year}): {author_books}")
