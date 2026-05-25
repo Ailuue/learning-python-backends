@@ -1,0 +1,42 @@
+# =============================================================================
+# SINGLE-STAGE DOCKERFILE — simple but results in a large image
+#
+# Everything happens in one stage using the full python:3.12 base image.
+# The final image contains pip, the pip download cache, build tools, and all
+# the intermediary cruft from installation. You don't need any of that at
+# runtime — it's just wasted space.
+#
+# Build: docker build -f Dockerfile.single -t fastapi-single .
+# Run:   docker run -p 8000:8000 fastapi-single
+# =============================================================================
+
+# FROM — sets the base image. python:3.12 is the full image (~900MB).
+FROM python:3.12
+
+# WORKDIR — sets the working directory inside the image for all following
+# commands. Creates the directory if it doesn't exist.
+WORKDIR /app
+
+# COPY — copies files from the build context (your machine) into the image.
+#
+# KEY CACHING INSIGHT: copy requirements.txt BEFORE the rest of the app.
+# Docker builds layers in order and caches each one. If requirements.txt
+# hasn't changed, the pip install layer is reused — even if your app code
+# changed. This is the single most important caching trick for Python images.
+COPY app/requirements.txt .
+
+# RUN — executes a command during the build. Creates a new layer.
+# --no-cache-dir prevents pip from storing its download cache in the image,
+# which saves a bit of space even in a single-stage build.
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Now copy the rest of the app code. This layer busts on every code change,
+# but the pip install layer above is still cached.
+COPY app/ .
+
+EXPOSE 8000
+
+# CMD — the default command when the container starts.
+# Written as JSON array (exec form) — runs directly, no shell wrapping.
+# Can be overridden at runtime: docker run fastapi-single bash
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
