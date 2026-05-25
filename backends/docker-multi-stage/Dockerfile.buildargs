@@ -1,0 +1,81 @@
+# =============================================================================
+# BUILD ARGS AND ENVIRONMENT VARIABLES
+#
+# Demonstrates ARG and ENV — two related but very different mechanisms.
+#
+# Build with defaults:
+#   docker build -f Dockerfile.buildargs -t fastapi-buildargs .
+#
+# Build with custom args:
+#   docker build -f Dockerfile.buildargs \
+#     --build-arg PORT=9000 \
+#     --build-arg APP_ENV=development \
+#     -t fastapi-buildargs .
+#
+# Run with runtime env override:
+#   docker run -p 9000:9000 -e LOG_LEVEL=debug fastapi-buildargs
+# =============================================================================
+
+
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY app/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+FROM python:3.12-slim
+
+# -------------------------------------------------------------------------
+# ARG — build-time variable
+# -------------------------------------------------------------------------
+# Exists ONLY during `docker build`. Not present in the final image or
+# running container. Override with --build-arg at build time.
+#
+# Inspect what was baked in: docker history fastapi-buildargs
+# WARNING: ARG values appear in docker history in plain text.
+#          Never use ARG for secrets (passwords, API keys, tokens).
+ARG PORT=8000
+ARG APP_ENV=production
+
+# -------------------------------------------------------------------------
+# ENV — runtime environment variable
+# -------------------------------------------------------------------------
+# Persists in the image and is available inside the running container.
+# Can reference an ARG value (ARG must be declared before ENV uses it).
+# Override at runtime with: docker run -e PORT=9001 myimage
+ENV PORT=${PORT}
+ENV APP_ENV=${APP_ENV}
+
+# ARG goes out of scope after its stage. If you need it in a later stage,
+# redeclare it (the --build-arg value is still passed through):
+#   FROM ...
+#   ARG PORT       ← re-declare without a default to inherit the passed value
+
+# Python-specific ENV vars worth setting in every Python image:
+ENV PYTHONDONTWRITEBYTECODE=1
+# Don't write .pyc bytecode files to disk. Keeps image layers cleaner and
+# avoids permission issues if the container runs as a non-root user.
+
+ENV PYTHONUNBUFFERED=1
+# Disable output buffering. Without this, stdout is buffered and your logs
+# won't appear in `docker logs` until the buffer flushes — terrible for
+# debugging. Set this to 1 always.
+
+ENV PYTHONFAULTHANDLER=1
+# On crash, dump a Python traceback even if the interpreter is in a bad state.
+# Invaluable for debugging segfaults in C extensions.
+
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY app/ .
+
+EXPOSE ${PORT}
+
+# Shell form (not exec/JSON form) so that ${PORT} is expanded at runtime.
+# Exec form ["uvicorn", ...] does NOT expand env vars — the shell never runs.
+# "sh -c" with exec form gives us both: proper signal handling + var expansion.
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
