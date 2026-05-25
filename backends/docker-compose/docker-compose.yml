@@ -1,0 +1,88 @@
+# =============================================================================
+# docker-compose.yml — base configuration (production-like)
+#
+# docker-compose.override.yml is automatically merged on top of this file
+# when you run `docker compose up`. It adds dev-only settings (hot reload,
+# bind mounts) without touching this base file.
+#
+# Docker Compose automatically loads .env from the project directory and
+# substitutes ${VAR} and ${VAR:-default} throughout this file.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # app — the FastAPI service
+  # ---------------------------------------------------------------------------
+  app:
+    build: .                        # build from Dockerfile in this directory
+    ports:
+      - "8000:8000"                 # host:container — reach it at localhost:8000
+    environment:
+      # Services reach each other using the SERVICE NAME as the hostname.
+      # "db" resolves to the db container's IP on the shared compose network.
+      # This is why you connect to "db:5432", not "localhost:5432".
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      APP_ENV: ${APP_ENV:-production}   # ${VAR:-default} syntax: use default if unset
+    depends_on:
+      db:
+        condition: service_healthy  # wait until db passes its healthcheck
+      redis:
+        condition: service_healthy  # wait until redis passes its healthcheck
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # db — PostgreSQL
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine       # alpine variant: smaller, same Postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      # Named volume — data persists across `docker compose down` and restarts.
+      # Deleted only by: docker compose down -v
+      - postgres_data:/var/lib/postgresql/data
+
+      # Bind mount — maps a local file into the container at a specific path.
+      # The postgres image runs every *.sql file here on first startup.
+      # Only runs when the data volume is empty (new volume or after down -v).
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    healthcheck:
+      # pg_isready: checks if Postgres is accepting connections.
+      # Compose waits for this to succeed before starting services that
+      # depend on db with condition: service_healthy.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"                 # expose to host for psql, TablePlus, etc.
+
+  # ---------------------------------------------------------------------------
+  # redis — in-memory cache / session store
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    volumes:
+      # Named volume for Redis persistence (RDB snapshots saved to /data).
+      # Without this, all cached data is lost when the container restarts.
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"                 # expose to host for redis-cli debugging
+
+
+# Named volumes are managed by Docker (stored in /var/lib/docker/volumes/).
+# They persist independently of containers — removing a container doesn't
+# delete the volume. Use `docker compose down -v` to delete them too.
+volumes:
+  postgres_data:
+  redis_data:
