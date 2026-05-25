@@ -1,0 +1,11 @@
+# Keeps the build context small — Docker sends this to the daemon before building.
+# Anything listed here is excluded, which speeds up builds and prevents cache busts.
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv
+venv/
+notes*.py
+*.md
+.git/
