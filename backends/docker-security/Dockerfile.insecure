@@ -1,0 +1,61 @@
+# =============================================================================
+# Dockerfile.insecure — INTENTIONALLY BROKEN. DO NOT use in production.
+#
+# Each issue is labeled [ISSUE N] and matched to the checklist in notes_security.py.
+# Build and compare with the secure Dockerfile to see the differences.
+#
+# Build:  docker build -f Dockerfile.insecure -t app-insecure .
+# Check:  docker run --rm app-insecure whoami           → root
+#         docker history app-insecure | grep SECRET     → value visible
+# =============================================================================
+
+
+# [ISSUE 1] Unpinned base image.
+# "python:3.12" resolves to a different image every time the tag moves.
+# A silent upstream change (new OS packages, a patched stdlib) can break
+# your build or introduce a vulnerability. Use python:3.12.X-slim-bookworm.
+FROM python:3.12
+
+
+# [ISSUE 2] Secrets baked into the image via ARG and ENV.
+# ARG values are visible in `docker history` — every layer is stored forever.
+# ENV values are visible in `docker inspect` on any running container.
+# Anyone with `docker` access to this host can read these values.
+ARG DB_PASSWORD=supersecret123
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV API_KEY=hardcoded-api-key-do-not-ship
+
+
+# [ISSUE 3] Full image base (python:3.12, not slim).
+# Includes gcc, make, curl, git, and hundreds of other packages.
+# Every extra binary is an attack surface. Attackers who break in have
+# a full toolset — compilers, network tools, scripting environments.
+
+
+WORKDIR /app
+
+
+# [ISSUE 4] COPY . . copies everything in the build context.
+# Without a comprehensive .dockerignore, this includes:
+#   .env              → real credentials
+#   secrets/          → secret files
+#   .git/             → full commit history
+#   __pycache__/      → cached bytecode
+# If you rely solely on .dockerignore as your secret protection, one
+# missing pattern leaks sensitive data permanently into the image layer.
+COPY . .
+
+
+# [ISSUE 5] No --no-cache-dir and no cache invalidation strategy.
+# pip's download cache ends up in the image, bloating it unnecessarily.
+RUN pip install -r app/requirements.txt
+
+
+# [ISSUE 6] No USER instruction — container runs as root (uid 0).
+# If an attacker can execute code inside this container, they have root.
+# On misconfigured Docker hosts, container root can escape to host root.
+# On well-configured hosts, it's still unnecessary and violates least privilege.
+
+
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
