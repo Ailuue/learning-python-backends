@@ -1,0 +1,90 @@
+# =============================================================================
+# Hardened docker-compose.yml
+#
+# Every security option is commented. Compare to a plain compose file to
+# see how many additional controls are available at the runtime layer,
+# even after the Dockerfile is already secured.
+# =============================================================================
+
+services:
+  app:
+    build: .
+    # -------------------------------------------------------------------------
+    # Bind to loopback only.
+    # "8000:8000" (no IP prefix) binds to 0.0.0.0 — every network interface,
+    # including any public-facing ones if this host is on the internet.
+    # "127.0.0.1:8000:8000" binds only to the loopback interface — the port
+    # is reachable from your machine but not from the network.
+    # In production behind a reverse proxy: "127.0.0.1:8000:8000"
+    # -------------------------------------------------------------------------
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    environment:
+      APP_ENV: production
+      # No sensitive values here. Use the secrets: block below instead.
+      # Values set under environment: appear in `docker inspect` in plain text.
+
+    # -------------------------------------------------------------------------
+    # Docker secrets — mounted at /run/secrets/<name> inside the container.
+    # The value is NOT in any environment variable.
+    # `docker inspect` shows the mount path but not the value.
+    # Compose reads the file at ./secrets/app_secret_key.txt on the host
+    # and injects it into the container at /run/secrets/app_secret_key.
+    # -------------------------------------------------------------------------
+    secrets:
+      - app_secret_key
+
+    # -------------------------------------------------------------------------
+    # Read-only root filesystem.
+    # The container's filesystem layers are mounted read-only.
+    # Prevents attackers (or bugs) from writing files, installing tools,
+    # or modifying the application at runtime.
+    # Pair with tmpfs for paths the app legitimately needs to write.
+    # -------------------------------------------------------------------------
+    read_only: true
+    tmpfs:
+      - /tmp      # uvicorn may write temp files here; safe to allow
+
+    # -------------------------------------------------------------------------
+    # Prevent privilege escalation.
+    # Blocks setuid and setgid binaries from elevating their privileges.
+    # A process running as uid 1001 cannot become root via a setuid binary
+    # (e.g. sudo, su) even if one were present in the image.
+    # -------------------------------------------------------------------------
+    security_opt:
+      - no-new-privileges:true
+
+    # -------------------------------------------------------------------------
+    # Drop Linux capabilities.
+    # Capabilities are fine-grained root-level kernel privileges. By default,
+    # containers get a subset of them. Dropping ALL and adding back none means
+    # the app cannot do anything that requires kernel privileges — correct for
+    # a web server that only needs to read files and make network connections.
+    #
+    # If you needed to bind to port 80 (< 1024), you'd add:
+    #   cap_add: [NET_BIND_SERVICE]
+    # We use port 8000, so we need nothing.
+    # -------------------------------------------------------------------------
+    cap_drop:
+      - ALL
+
+    # -------------------------------------------------------------------------
+    # Explicit user — matches the USER instruction in the Dockerfile.
+    # Redundant (the Dockerfile already sets it) but makes the intent visible
+    # at the compose layer and prevents accidental override.
+    # -------------------------------------------------------------------------
+    user: "1001:1001"
+
+    restart: unless-stopped
+
+
+# =============================================================================
+# Secrets definition
+# For non-Swarm Compose, secrets are read from a local file.
+# In Docker Swarm or Kubernetes, secrets come from the orchestrator's
+# secret store instead of a file.
+# =============================================================================
+secrets:
+  app_secret_key:
+    file: ./secrets/app_secret_key.txt
