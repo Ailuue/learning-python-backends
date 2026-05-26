@@ -103,8 +103,10 @@ docker history fastapi-multi
 
 # 6. Explore inside the running container
 docker run -it --entrypoint bash fastapi-multi
-  # Inside: ls, python --version, pip list (pip is NOT here — confirm it)
-  # Try: which pip   (should fail — pip doesn't exist in the runtime stage)
+  # Inside: ls, python --version, pip list
+  # Try: which pip   → /opt/venv/bin/pip
+  # pip IS present — it's part of the venv and copied with it.
+  # The compiler (gcc, g++) is what's absent, not pip itself.
 
 # 7. Layer cache demo — experience the caching speedup
 #    Edit app/main.py (change the "message" string in root())
@@ -121,7 +123,11 @@ docker run fastapi-multi uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 - fastapi-single is ~1GB, fastapi-multi is ~200MB (roughly 5x smaller)
 - `docker history` shows fastapi-multi has far fewer layers
-- pip is absent from the multi-stage runtime container
+- pip IS present in the runtime image — `python -m venv` installs it into the
+  venv by default, and COPY --from=builder copies the whole venv including pip.
+  The size saving comes from the slim base image, not from removing pip.
+  To truly strip pip: `pip uninstall pip setuptools wheel -y` at the end of
+  the builder stage, before COPY --from=builder runs.
 - Rebuilding after a code change reuses the pip install layer (CACHED)
 - The .dockerignore prevents notes.py and __pycache__ from entering the
   build context, keeping things clean and preventing accidental cache busts
