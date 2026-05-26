@@ -10,15 +10,44 @@ Connection strings come from environment variables set in docker-compose.yml.
 """
 
 import json
+import logging
 import os
+import uuid
 from contextlib import contextmanager
 
 import psycopg2
 import redis as redis_lib
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="Docker Compose Practice API")
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    """
+    Attach a short unique ID to every request.
+    Logged on every request so you can grep for it across all service logs.
+    Returned in the X-Request-ID response header so clients can correlate too.
+
+    In a real multi-service system you'd read an incoming X-Request-ID header
+    first (set by the upstream caller or API gateway) and propagate it forward
+    to any downstream service calls — so one ID traces the whole chain.
+    """
+    request_id = uuid.uuid4().hex[:8]
+    response = await call_next(request)
+    logger.info(
+        "request_id=%s method=%s path=%s status=%d",
+        request_id, request.method, request.url.path, response.status_code,
+    )
+    response.headers["X-Request-ID"] = request_id
+    return response
 
 _redis = redis_lib.from_url(
     os.environ.get("REDIS_URL", "redis://localhost:6379"),
