@@ -25,6 +25,16 @@ services:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
       APP_ENV: ${APP_ENV:-production}   # ${VAR:-default} syntax: use default if unset
+    healthcheck:
+      # urllib.request raises an exception on connection failure or HTTP error,
+      # causing Python to exit non-zero — Docker treats that as unhealthy.
+      # CMD (not CMD-SHELL) passes the argument directly to Python, no shell quoting needed.
+      # start_period: grace window before failures count — app needs time to boot.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     depends_on:
       db:
         condition: service_healthy  # wait until db passes its healthcheck
@@ -59,8 +69,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    # ports: maps host:container — the port is reachable from your host machine
+    #         AND from other services on the Docker network.
+    # expose: declares the port for internal use only — other services can reach
+    #         it at db:5432, but localhost:5432 on your host will NOT work.
+    #
+    # This file uses ports: for dev convenience (connect with psql, TablePlus).
+    # In production you'd remove ports: entirely — db should never be reachable
+    # from outside the Docker network.
     ports:
-      - "5432:5432"                 # expose to host for psql, TablePlus, etc.
+      - "5432:5432"
 
   # ---------------------------------------------------------------------------
   # redis — in-memory cache / session store
@@ -77,7 +95,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "6379:6379"                 # expose to host for redis-cli debugging
+      - "6379:6379"                 # same as db: dev convenience, remove in prod
 
 
 # Named volumes are managed by Docker (stored in /var/lib/docker/volumes/).
