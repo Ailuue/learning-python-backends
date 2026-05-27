@@ -44,10 +44,14 @@ async def request_id_middleware(request: Request, call_next):
     response = await call_next(request)
     logger.info(
         "request_id=%s method=%s path=%s status=%d",
-        request_id, request.method, request.url.path, response.status_code,
+        request_id,
+        request.method,
+        request.url.path,
+        response.status_code,
     )
     response.headers["X-Request-ID"] = request_id
     return response
+
 
 _redis = redis_lib.from_url(
     os.environ.get("REDIS_URL", "redis://localhost:6379"),
@@ -55,7 +59,7 @@ _redis = redis_lib.from_url(
 )
 
 ITEMS_CACHE_KEY = "items:all"
-CACHE_TTL = 30  # seconds — short so you can watch the cache expire
+CACHE_TTL = 300  # seconds
 
 
 @contextmanager
