@@ -57,7 +57,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     : await res.text()
 
   if (!res.ok) {
-    if (res.status === 401) {
+    if (res.status === 401 && getToken()) {
       window.dispatchEvent(new CustomEvent('auth:unauthorized'))
     }
     throw new ApiError(
