@@ -84,7 +84,7 @@ services:
   frontend:
     build: ../../frontends/bookmark_manager
     ports:
-      - "5175:80"   # port 5175 is already in the CORS allowlist in main.py
+      - "5175:8080"   # port 5175 is already in the CORS allowlist in main.py
     depends_on:
       - api
 
