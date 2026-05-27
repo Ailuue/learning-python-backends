@@ -1,0 +1,4 @@
+sqlalchemy==2.0.49
+psycopg2-binary==2.9.12
+redis==5.2.1
+python-dotenv==1.2.2
