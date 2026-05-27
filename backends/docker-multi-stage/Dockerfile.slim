@@ -25,7 +25,12 @@ WORKDIR /app
 
 COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+# Example to show that adding and removing on the same line will keep the image size down, 
+# because the intermediate big file won't be committed to the layer. 
+# If we did it in two separate RUN commands, the big file would be part of 
+# the first layer and would still take up space in the final image even 
+# after we delete it in the second layer.
+RUN dd if=/dev/urandom of=/tmp/big bs=1M count=50 && rm /tmp/big
 COPY app/ .
 
 EXPOSE 8000
