@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import relationship
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from app.models.bookmark import Bookmark
-    from app.models.user import User
 
 
 class Category(SQLModel, table=True):
@@ -18,5 +18,9 @@ class Category(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", index=True, ondelete="CASCADE")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    user: "User" = Relationship(back_populates="categories")
+    user: ClassVar = relationship(
+        "User",
+        back_populates="categories",
+        foreign_keys="[Category.user_id]",
+    )
     bookmarks: list["Bookmark"] = Relationship(back_populates="category")
