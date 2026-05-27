@@ -1,0 +1,92 @@
+# Shared environment variables used by api, worker, and beat.
+# YAML anchors let us define once and merge (<<: *app-env) into each service.
+# In production, replace SECRET_KEY and POSTGRES_PASSWORD with real secrets.
+x-app-env: &app-env
+  DATABASE_URL: postgresql://postgres:password@db:5432/bookmark_manager
+  REDIS_URL: redis://redis:6379/0
+  RATELIMIT_STORAGE_URI: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/1
+  SECRET_KEY: change-me-in-production
+  ALGORITHM: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  ENVIRONMENT: development
+
+services:
+
+  # ── Infrastructure ────────────────────────────────────────────────────────
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookmark_manager
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Application ───────────────────────────────────────────────────────────
+
+  api:
+    build: .
+    # Run Alembic migrations first, then start the server.
+    # depends_on health checks guarantee db is ready before this runs.
+    command:
+      - sh
+      - -c
+      - "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8002:8000"   # matches API_URL = 'http://localhost:8002' in the frontend
+    environment:
+      <<: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: celery -A app.celery_app.celery_app worker --loglevel=info
+    environment:
+      <<: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  beat:
+    build: .
+    # --schedule writes the schedule file to /tmp so the non-root user can write it
+    command: celery -A app.celery_app.celery_app beat --loglevel=info --schedule /tmp/celerybeat-schedule
+    environment:
+      <<: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ../../frontends/bookmark_manager
+    ports:
+      - "5175:80"   # port 5175 is already in the CORS allowlist in main.py
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
