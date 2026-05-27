@@ -1,0 +1,23 @@
+# Runs the test suite in an isolated container with no external services.
+# Tests use SQLite (in-memory), fakeredis, and a stubbed Celery — all
+# configured in conftest.py before any app code is imported.
+#
+# Usage:
+#   docker compose -f docker-compose.test.yml run --rm test
+
+services:
+  test:
+    build: .
+    command: pytest
+    environment:
+      # conftest.py overrides DATABASE_URL and RATELIMIT_STORAGE_URI at
+      # import time, but pydantic-settings needs all fields to be valid
+      # strings at startup, so we provide safe defaults here.
+      SECRET_KEY: test-secret-key-not-for-production
+      ALGORITHM: HS256
+      DATABASE_URL: sqlite:///./test.db
+      REDIS_URL: redis://localhost:6379/0
+      RATELIMIT_STORAGE_URI: memory://
+      CELERY_BROKER_URL: redis://localhost:6379/1
+      CELERY_RESULT_BACKEND: redis://localhost:6379/1
+      ENVIRONMENT: test
