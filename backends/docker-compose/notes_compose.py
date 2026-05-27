@@ -187,9 +187,12 @@ docker compose up -d --scale app=3
 
 4. Verify service networking (from inside the app container):
      docker compose exec app bash
-     # These work because service names resolve on the compose network:
-     curl db:5432       # will fail (not HTTP) but DNS resolves
-     redis-cli -h redis ping   # may not be installed, but try
+     # curl and redis-cli are not installed in python:3.12-slim.
+     # Use Python's socket module instead — always available:
+     python3 -c "import socket; print(socket.gethostbyname('db'))"
+     python3 -c "import socket; print(socket.gethostbyname('redis'))"
+     python3 -c "import socket; socket.create_connection(('db', 5432), timeout=2); print('db reachable')"
+     python3 -c "import socket; socket.create_connection(('redis', 6379), timeout=2); print('redis reachable')"
 
 5. Hot reload demo (override is already active):
      # Edit app/main.py — change the root() message
@@ -210,32 +213,44 @@ docker compose up -d --scale app=3
      curl http://localhost:8000/items   # back to seed data only (init.sql ran again)
 
 7. Connect to Postgres directly from your host:
+     docker compose exec db psql -U postgres -d appdb   # always reliable
+
+     # Alternatively from the host:
      psql -h localhost -U postgres -d appdb
-     # password is in .env: POSTGRES_PASSWORD=localpass
+     # GOTCHA: if you have PostgreSQL installed via Homebrew and it's running,
+     # psql -h localhost hits THAT instead of the Docker container — it won't
+     # have appdb. Check with: brew services list | grep postgresql
+     # Fix: brew services stop postgresql@<version>  (while practicing)
 
 8. Connect to Redis from your host:
+     docker compose exec redis redis-cli   # always reliable
+     KEYS *
+     TTL items:all
+
+     # Alternatively from the host:
      redis-cli -p 6379
-     KEYS *               # see what's cached
-     TTL items:all        # see how many seconds until cache expires
+     # GOTCHA: same issue as Postgres — if Homebrew Redis is running, redis-cli
+     # hits that instance (which is empty) instead of the Docker container.
+     # Check: brew services list | grep redis
+     # Fix: brew services stop redis  (while practicing)
 """
 
-
 SERVICES = {
-    "app":   "FastAPI API — localhost:8000",
-    "db":    "PostgreSQL 16 — localhost:5432 (also reachable as 'db' inside containers)",
+    "app": "FastAPI API — localhost:8000",
+    "db": "PostgreSQL 16 — localhost:5432 (also reachable as 'db' inside containers)",
     "redis": "Redis 7 — localhost:6379 (also reachable as 'redis' inside containers)",
 }
 
 QUICK_COMMANDS = {
-    "Start all":          "docker compose up",
+    "Start all": "docker compose up",
     "Start (background)": "docker compose up -d",
-    "View logs":          "docker compose logs -f",
-    "Rebuild app":        "docker compose build app && docker compose up -d app",
-    "Stop (keep data)":   "docker compose down",
-    "Stop (wipe data)":   "docker compose down -v",
-    "Shell in app":       "docker compose exec app bash",
-    "psql":               "docker compose exec db psql -U postgres -d appdb",
-    "redis-cli":          "docker compose exec redis redis-cli",
+    "View logs": "docker compose logs -f",
+    "Rebuild app": "docker compose build app && docker compose up -d app",
+    "Stop (keep data)": "docker compose down",
+    "Stop (wipe data)": "docker compose down -v",
+    "Shell in app": "docker compose exec app bash",
+    "psql": "docker compose exec db psql -U postgres -d appdb",
+    "redis-cli": "docker compose exec redis redis-cli",
 }
 
 
