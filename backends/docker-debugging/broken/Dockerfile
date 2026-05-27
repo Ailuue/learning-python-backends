@@ -13,4 +13,4 @@ EXPOSE 8000
 # Symptom:  curl localhost:8000 → connection refused
 # Find it:  docker logs <container>  (shows the port uvicorn actually bound)
 # Fix:      change 9000 to 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
