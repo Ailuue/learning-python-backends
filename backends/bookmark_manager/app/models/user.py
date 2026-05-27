@@ -1,19 +1,17 @@
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
+from sqlalchemy.orm import relationship
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from app.models.bookmark import Bookmark
-    from app.models.category import Category
     from app.models.tag import Tag
 
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True, max_length=255)
-    first_name: str = Field(max_length=20)
-    last_name: str = Field(max_length=20)
     username: str = Field(unique=True, index=True, min_length=3, max_length=50)
     password_hash: str
     is_active: bool = True
@@ -22,11 +20,15 @@ class User(SQLModel, table=True):
     default_category_id: int | None = Field(
         default=None, foreign_key="category.id", ondelete="SET NULL"
     )
-    bookmarks: list["Bookmark"] = Relationship(
-        back_populates="user", cascade_delete=True
-    )
-    categories: list["Category"] = Relationship(
-        back_populates="user", cascade_delete=True
-    )
 
+    bookmarks: list["Bookmark"] = Relationship(back_populates="user", cascade_delete=True)
+    # Two FK paths exist between User and Category (default_category_id → category.id
+    # and category.user_id → user.id), so SQLModel's auto-detection is ambiguous.
+    # Using SQLAlchemy's relationship() directly with explicit foreign_keys resolves it.
+    categories: ClassVar = relationship(
+        "Category",
+        back_populates="user",
+        foreign_keys="[Category.user_id]",
+        cascade="all, delete-orphan",
+    )
     tags: list["Tag"] = Relationship(back_populates="user", cascade_delete=True)
