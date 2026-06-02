@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class URLCreate(BaseModel):
@@ -50,3 +50,22 @@ class URLListResponse(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+# Auth schemas
+class RegisterRequest(BaseModel):
+    username: str = Field(min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_]+$")
+    password: str = Field(min_length=8)
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
