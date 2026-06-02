@@ -4,9 +4,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import cache
+from app.auth import get_current_user
 from app.config import settings
 from app.database import get_db
-from app.models import URL
+from app.models import URL, User
 from app.schemas import URLCreate, URLListResponse, URLResponse, URLStats
 from app.shortener import generate_short_code
 
@@ -30,9 +31,11 @@ def _to_response(url: URL) -> URLResponse:
 
 @router.post("", response_model=URLResponse, status_code=201)
 async def create_short_url(
-    payload: URLCreate, db: AsyncSession = Depends(get_db)
+    payload: URLCreate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
 ) -> URLResponse:
-    for attempt in range(_MAX_RETRIES):
+    for _ in range(_MAX_RETRIES):
         short_code = payload.custom_code or generate_short_code()
         url = URL(
             short_code=short_code,
@@ -48,7 +51,6 @@ async def create_short_url(
             await db.rollback()
             if payload.custom_code:
                 raise HTTPException(status_code=409, detail="Custom code already taken")
-            # Random collision — extremely rare, but retry with a new code
 
     raise HTTPException(status_code=500, detail="Failed to generate a unique short code")
 
@@ -90,7 +92,11 @@ async def get_url_stats(short_code: str, db: AsyncSession = Depends(get_db)) -> 
 
 
 @router.delete("/{short_code}", status_code=204)
-async def deactivate_url(short_code: str, db: AsyncSession = Depends(get_db)) -> None:
+async def deactivate_url(
+    short_code: str,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+) -> None:
     result = await db.execute(select(URL).where(URL.short_code == short_code))
     url = result.scalar_one_or_none()
     if url is None:
