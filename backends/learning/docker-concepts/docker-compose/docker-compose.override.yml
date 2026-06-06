@@ -1,0 +1,27 @@
+# =============================================================================
+# docker-compose.override.yml — dev overrides
+#
+# Docker Compose automatically merges this file on top of docker-compose.yml
+# when you run `docker compose up` or `docker compose build`.
+# No -f flag needed — the override is always active in this directory.
+#
+# To run WITHOUT the override (production-like locally):
+#   docker compose -f docker-compose.yml up
+# =============================================================================
+
+services:
+  app:
+    # Bind mount: maps ./app on your host to /app in the container.
+    # Because the Dockerfile's WORKDIR is /app, file changes on your host
+    # are immediately visible inside the running container.
+    # Combined with --reload below, saving a file triggers an instant restart.
+    volumes:
+      - ./app:/app
+
+    # Override CMD from the Dockerfile to add --reload.
+    # uvicorn watches for file changes and restarts the server automatically.
+    # This replaces the CMD in the Dockerfile only for this compose session.
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+    environment:
+      APP_ENV: development

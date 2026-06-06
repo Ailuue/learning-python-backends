@@ -1,0 +1,27 @@
+# =============================================================================
+# docker-compose.test.yml — test runner override
+#
+# Overrides the app service to run pytest instead of uvicorn.
+# Merge with the base file using -f so docker-compose.override.yml (dev
+# hot-reload) is NOT auto-applied — tests run against the built image.
+#
+# Run:
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml run --rm app
+#
+# `docker compose run` respects depends_on, so db and redis start first
+# and wait for their health checks before pytest begins.
+#
+# Key difference from `docker compose exec`:
+#   run   → spins up a fresh container (uses the built image, no bind mount)
+#   exec  → runs inside the already-running dev container (has the bind mount,
+#            so tests see live code edits — useful during active development)
+# =============================================================================
+
+services:
+  app:
+    command: ["python", "-m", "pytest", "tests/", "-v", "--tb=short"]
+    environment:
+      TESTING: "1"
+    restart: "no"          # exit when pytest finishes, don't restart
+    healthcheck:
+      disable: true        # not a long-running server, no health check needed
