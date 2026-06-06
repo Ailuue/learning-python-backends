@@ -1,4 +1,0 @@
-fastapi
-uvicorn[standard]
-structlog
-prometheus-client

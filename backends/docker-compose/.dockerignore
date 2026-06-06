@@ -1,8 +1,0 @@
-__pycache__/
-*.pyc
-.env
-.venv
-venv/
-notes*.py
-*.md
-.git/

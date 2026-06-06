@@ -1,7 +1,0 @@
-fastapi
-uvicorn[standard]
-authlib
-httpx
-itsdangerous
-pyjwt
-python-dotenv

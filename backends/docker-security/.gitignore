@@ -1,7 +1,0 @@
-.env
-__pycache__/
-*.pyc
-# Exclude real secret files. The placeholder in secrets/ is committed
-# for practice convenience — in a real project, secrets/ would be entirely
-# git-ignored and populated from a secrets manager or 1Password/Vault.
-secrets/*.prod.txt
