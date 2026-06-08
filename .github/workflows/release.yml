@@ -1,0 +1,63 @@
+name: Release
+
+# Trigger on version tags pushed to the repo.
+# Convention: vMAJOR.MINOR.PATCH  (e.g. v1.2.3, v0.1.0)
+# Push a tag to trigger this:
+#   git tag v1.0.0
+#   git push origin v1.0.0
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+# Write permission is required to create GitHub releases.
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history so the release notes generator can read all commits
+          # between this tag and the previous one.
+          fetch-depth: 0
+
+      # Run the test suite before publishing the release.
+      # A release should only exist if the code at that tag actually passes.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run tests
+        working-directory: backends/learning/testing-concepts
+        run: |
+          pip install -r requirements.txt
+          pytest
+
+      # Extract the version number from the tag (strips the "v" prefix).
+      # github.ref_name is "v1.2.3" → VERSION becomes "1.2.3"
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      # GitHub's auto-generated release notes group PRs and commits
+      # since the last release tag automatically.
+      # `generate_release_notes: true` enables this — no external changelog tool needed.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "v${{ steps.version.outputs.VERSION }}"
+          generate_release_notes: true
+          body: |
+            ## Release v${{ steps.version.outputs.VERSION }}
+
+            **Commit:** `${{ github.sha }}`
+            **Tests:** passed on Python 3.13
+
+            See the full changelog below (auto-generated from merged PRs and commits).
