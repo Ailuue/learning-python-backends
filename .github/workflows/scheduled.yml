@@ -1,0 +1,77 @@
+name: Scheduled Health Check
+
+# Two triggers:
+#
+# schedule — cron syntax: "minute hour day-of-month month day-of-week"
+#   All times are UTC. GitHub may delay scheduled runs by up to 15 minutes
+#   under heavy load, so don't use this for latency-sensitive tasks.
+#
+# workflow_dispatch — adds a "Run workflow" button in the Actions UI.
+#   The `inputs` block defines fields the user fills in before triggering.
+#   When triggered by schedule, github.event.inputs is empty — use `||` defaults.
+on:
+  schedule:
+    - cron: "0 9 * * 1"   # Every Monday at 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run — report only, no side effects"
+        type: boolean
+        default: true
+      python_version:
+        description: "Python version to test against"
+        type: choice
+        options: ["3.11", "3.12", "3.13"]
+        default: "3.13"
+
+jobs:
+  health-check:
+    name: Weekly Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Log the trigger context — useful for understanding why a run happened.
+      - name: Log trigger context
+        run: |
+          echo "Triggered by:   ${{ github.event_name }}"
+          echo "Python version: ${{ inputs.python_version || '3.13 (scheduled default)' }}"
+          echo "Dry run:        ${{ inputs.dry_run || 'false (scheduled)' }}"
+          echo "Workflow:       ${{ github.workflow }}"
+          echo "Run ID:         ${{ github.run_id }}"
+          echo "Ref:            ${{ github.ref_name }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version || '3.13' }}
+
+      - name: Install dependencies
+        working-directory: backends/learning/testing-concepts
+        run: pip install -r requirements.txt
+
+      # Run the full test suite as the health signal.
+      # If the codebase is broken on main between normal CI runs, this catches it.
+      - name: Run test suite
+        working-directory: backends/learning/testing-concepts
+        run: pytest
+
+      # Only runs when the previous step failed.
+      # In a real project this step would page on-call or post to Slack.
+      - name: Report failure
+        if: failure()
+        run: |
+          echo "::error title=Health check failed::Test suite is broken on main."
+          echo "Investigate before the next deployment."
+          # Real project: curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} -d '{"text":"..."}'
+
+      # Only runs on success during an actual scheduled run (not dry_run manual trigger).
+      - name: Confirm healthy
+        if: success()
+        run: |
+          echo "Health check passed."
+          DRY="${{ inputs.dry_run }}"
+          if [ "$DRY" = "true" ]; then
+            echo "(dry run — no external notifications sent)"
+          fi
