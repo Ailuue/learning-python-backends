@@ -1,0 +1,100 @@
+name: CI
+
+# Run on every push to main and on every pull request.
+# Scoped to paths so only relevant changes trigger a run —
+# pushing docs doesn't need to run the test suite.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backends/learning/testing-concepts/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "backends/learning/testing-concepts/**"
+      - ".github/workflows/ci.yml"
+
+# Cancel in-progress runs for the same branch when a new push arrives.
+# Without this, a rapid series of pushes queues up redundant runs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Lint — fast, no test DB needed, runs on a single Python version.
+  # Keeping lint as its own job means: if formatting fails, the test matrix
+  # doesn't waste runner minutes before you even see the lint error.
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Check formatting
+        run: ruff format --check backends/learning/testing-concepts/
+
+      - name: Check linting
+        run: ruff check backends/learning/testing-concepts/
+
+  # ---------------------------------------------------------------------------
+  # Test — matrix across Python versions.
+  # fail-fast: false means all three versions run even if 3.11 fails,
+  # so you see the full compatibility picture in one pass.
+  # ---------------------------------------------------------------------------
+  test:
+    name: Test / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+      fail-fast: false
+
+    defaults:
+      run:
+        working-directory: backends/learning/testing-concepts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Cache the pip download cache (not the venv) so the same wheel
+      # doesn't get re-downloaded on every run.
+      # Key includes requirements.txt hash: cache is invalidated when deps change.
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('backends/learning/testing-concepts/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest
+
+      # Upload the pytest result as an artifact so you can inspect failures
+      # even after the run page is closed. Only runs when tests fail.
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: backends/learning/testing-concepts/.pytest_cache/
+          retention-days: 7
