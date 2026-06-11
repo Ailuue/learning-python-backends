@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block subject %}Welcome to My App, {{ name }}!{% endblock %}
+{% block header %}Welcome aboard!{% endblock %}
+
+{% block body %}
+  <p>Hi {{ name }},</p>
+  <p>Thanks for signing up. We're thrilled to have you.</p>
+  <p>Click below to verify your email address and activate your account:</p>
+  <a class="btn" href="{{ verify_url }}">Verify Email Address</a>
+  <p>This link expires in <strong>24 hours</strong>.</p>
+  <p>If you didn't create an account, you can safely ignore this email.</p>
+  <p>— The My App Team</p>
+{% endblock %}
