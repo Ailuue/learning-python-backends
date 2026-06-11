@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// Used by: 03_client_streaming.py
+
+service FileUpload {
+  // Client streaming: client sends many chunks, server replies once with a summary
+  rpc UploadFile (stream Chunk) returns (UploadResult);
+}
+
+message Chunk {
+  string filename    = 1;
+  bytes  data        = 2;
+  int32  chunk_index = 3;
+}
+
+message UploadResult {
+  string filename     = 1;
+  int32  total_chunks = 2;
+  int64  total_bytes  = 3;
+  string status       = 4;
+}
