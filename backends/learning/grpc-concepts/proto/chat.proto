@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+// Used by: 04_bidirectional_streaming.py
+
+service Chat {
+  // Bidirectional streaming: both client and server send multiple messages
+  rpc Connect (stream ChatMessage) returns (stream ChatMessage);
+}
+
+message ChatMessage {
+  string user      = 1;
+  string text      = 2;
+  int64  timestamp = 3;  // unix millis
+}
