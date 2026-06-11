@@ -1,0 +1,2 @@
+# smtplib and imaplib are Python stdlib — no install needed.
+jinja2==3.1.4
