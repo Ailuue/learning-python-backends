@@ -1,6 +1,8 @@
 # Linked List
 
-A singly linked list with both head and tail pointers, allowing O(1) insertion at either end.
+A linked list is a way to store a sequence of items where each item holds a pointer to the next one. Unlike an array, the items don't need to sit next to each other in memory — each node can be anywhere, and you find the next one by following its pointer. Think of it like a scavenger hunt: each clue tells you where the next one is hidden.
+
+This implementation is a **singly linked list** — pointers only go in one direction (forward). It also tracks both ends of the list (head and tail), so you can add to either end instantly without walking through all the nodes first.
 
 ## How it works
 
