@@ -1,6 +1,10 @@
 # Insertion Sort
 
-Builds a sorted prefix one element at a time by inserting each new element into its correct position among the already-sorted elements to its left.
+Insertion sort mirrors how most people naturally sort a hand of playing cards. You pick up one card at a time and slide it left into the correct position among the cards you've already sorted. By the time you've picked up every card, your hand is sorted.
+
+In code, insertion sort maintains a growing "sorted" section at the front of the array. For each new element, it shifts everything larger one step to the right to make room, then drops the element into its correct spot.
+
+Insertion sort is slow on large random inputs (O(n²)), but it's fast on small arrays and nearly-sorted data — which is why Python's built-in sort uses it internally for small partitions.
 
 ## How it works
 
