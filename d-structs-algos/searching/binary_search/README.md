@@ -1,6 +1,10 @@
 # Binary Search
 
-Iterative binary search on a sorted array — finds a target in O(log n) time.
+Imagine looking up a word in a dictionary. You don't start at page 1 and flip through every page — you open to the middle, decide whether your word comes before or after that point, then repeat with the relevant half. Binary search applies exactly this intuition to sorted arrays.
+
+Given a sorted list, binary search repeatedly halves the search region: check the middle element, then discard the half that can't contain the target. This is dramatically faster than checking every element — an array of a billion items takes at most 30 comparisons.
+
+The one hard requirement: **the input must be sorted**. Binary search gives wrong answers on unsorted data.
 
 ## How it works
 
