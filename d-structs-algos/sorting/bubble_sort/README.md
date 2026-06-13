@@ -1,6 +1,10 @@
 # Bubble Sort
 
-Repeatedly compares adjacent elements and swaps them if they're out of order. The largest unsorted value "bubbles up" to its correct position on each pass.
+Bubble sort is the simplest sorting algorithm to understand. The idea: scan through the list from left to right, and whenever two neighboring elements are in the wrong order, swap them. Repeat this process until no swaps are needed.
+
+With each full pass, the largest remaining unsorted element "bubbles up" to its correct position at the end of the list — like a bubble rising to the surface. After enough passes, everything is in order.
+
+Bubble sort is not efficient for large lists, but it's an ideal first algorithm to study because the mechanics are easy to visualize and reason about.
 
 ## How it works
 
