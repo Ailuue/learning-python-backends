@@ -1,6 +1,10 @@
 # Binary Search Tree
 
-A recursive BST where every node's left subtree contains only smaller values and the right subtree only larger values.
+A binary search tree (BST) organizes data so that every search decision is simple: at each node, go left if the value you're looking for is smaller, or go right if it's larger. This rule is enforced everywhere in the tree — every node's left subtree contains only smaller values, and its right subtree contains only larger ones.
+
+The result is that you can find, insert, or delete any value by making one left-or-right decision per level and ignoring the entire other half of the tree each time. It's the same idea as binary search on a sorted array, but in a tree structure that also supports fast insertions and deletions.
+
+BSTs are a foundational concept that leads directly to more advanced self-balancing trees like the [Red-Black Tree](../../red_black_tree/).
 
 ## How it works
 
