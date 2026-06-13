@@ -1,6 +1,10 @@
 # Subset Sum
 
-Given a list of non-negative integers and a target, does any subset of the list sum exactly to the target?
+Subset sum is a classic NP-complete problem that is easy to state but hard to solve in general.
+
+The question: given a list of numbers, can you pick some of them (any combination) that add up to exactly a target value? You might think "just try all combinations" — and that's exactly what we do here. The problem is that the number of combinations explodes exponentially as the list grows, making brute force impractical for large inputs.
+
+**Given a list of non-negative integers and a target, does any subset of the list sum exactly to the target?**
 
 ```python
 subset_sum([3, 1, 4, 9], target=8)   # True  — {4, 3, 1}
