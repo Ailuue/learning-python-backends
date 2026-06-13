@@ -1,6 +1,8 @@
 # Selection Sort
 
-On each pass, finds the minimum element in the unsorted region and swaps it to the front.
+Selection sort is straightforward: find the smallest element in the unsorted portion of the list, move it to the front, then repeat for the remaining elements. Each pass "selects" the next smallest value and places it where it belongs.
+
+It's intuitive and easy to implement, but unlike bubble sort and insertion sort, it never short-circuits — it always scans the entire remaining unsorted section, even if the list is already sorted. This makes it consistently O(n²). Its one practical advantage is that it makes very few writes (at most n−1 swaps), which matters when writing to memory is significantly more expensive than reading.
 
 ## How it works
 
