@@ -1,6 +1,10 @@
 # Sorting
 
-Six sorting implementations ranging from simple quadratic algorithms to efficient divide-and-conquer, plus Python's built-in `sorted()` with a custom key.
+Sorting — arranging items in order — is one of the most studied problems in computer science. It comes up constantly: search results ranked by relevance, leaderboards ordered by score, database records returned in alphabetical order. Even other algorithms depend on sorted data (like binary search).
+
+There are many ways to sort a list, and no single algorithm is best in all situations. Simple algorithms like bubble sort and insertion sort are easy to understand and fast on small or nearly-sorted inputs. Divide-and-conquer algorithms like merge sort and quick sort scale to large inputs efficiently. Understanding the trade-offs between them is a core part of learning algorithms.
+
+This folder contains six implementations ranging from simple quadratic algorithms to efficient divide-and-conquer, plus Python's built-in `sorted()` with a custom key.
 
 ## Implementations
 
