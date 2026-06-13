@@ -1,6 +1,10 @@
 # Quick Sort
 
-Divide-and-conquer sort: choose a pivot, partition the array so all smaller elements are to the left and all larger to the right, then recursively sort each side.
+Quick sort is one of the most widely used sorting algorithms in practice — it's the default sort in many standard libraries, including C's `qsort`. Like merge sort, it uses divide-and-conquer, but it divides differently.
+
+Instead of splitting evenly down the middle, quick sort picks a **pivot** element and rearranges the array so that everything smaller than the pivot ends up on its left, and everything larger on its right. At that point the pivot is in its final sorted position — permanently. Then quick sort repeats on the left and right sections independently.
+
+The key insight is that after partitioning, you never need to compare anything in the left section against anything in the right section again. Each partition step places one element exactly and shrinks the remaining work.
 
 ## How it works
 
