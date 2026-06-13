@@ -1,6 +1,10 @@
 # Travelling Salesman Problem (TSP)
 
-Given a set of cities and distances between them, is there a route that visits every city exactly once with total distance ≤ a given bound?
+The Travelling Salesman Problem is one of the most famous problems in computer science and mathematics. The setup is simple: a salesperson needs to visit a set of cities and return home. What is the shortest route that visits every city exactly once?
+
+This sounds straightforward, but the number of possible routes grows factorially with the number of cities — 10 cities means over 3 million routes, 20 cities means more routes than there are atoms in the observable universe. No known algorithm can guarantee an optimal solution without checking a number of routes that grows this fast.
+
+The version implemented here asks a slightly simpler decision version: **given a set of cities and distances between them, is there a route that visits every city exactly once with total distance ≤ a given bound?**
 
 ## Why it's hard
 
