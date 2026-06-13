@@ -1,6 +1,8 @@
 # Python's `sorted()` with a Custom Key
 
-Demonstrates using Python's built-in `sorted()` function with a `key=` argument to sort objects by a computed value.
+In real code, you rarely need to implement your own sorting algorithm. Python's built-in `sorted()` function is fast, stable, and covers the vast majority of sorting needs. The key skill is knowing how to tell it **what to sort by** when you're working with custom objects or non-obvious orderings.
+
+This is done with the `key=` argument: you provide a function that extracts a comparable value from each element, and `sorted()` uses those values to determine order. This pattern is used constantly — sorting users by signup date, sorting search results by relevance score, sorting products by price.
 
 ## The problem
 
