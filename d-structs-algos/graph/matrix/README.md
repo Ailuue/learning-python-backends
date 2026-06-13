@@ -1,6 +1,10 @@
 # Graph — Adjacency Matrix
 
-An undirected graph backed by a 2-D boolean matrix.
+An **adjacency matrix** is an alternative way to store a graph. You create a grid — rows and columns both represent vertices — and mark a cell `True` wherever an edge exists between the corresponding pair. Want to know if vertex 2 connects to vertex 5? Check `grid[2][5]` directly.
+
+The trade-off is space: the grid always has V × V cells, even if the graph has very few edges. This makes it wasteful for sparse graphs, but ideal for **dense graphs** where most pairs of vertices are connected — the constant-time edge lookup with zero overhead is worth it.
+
+Comparing this implementation to the [adjacency list](../adjacency_list/) side-by-side is a good way to see how the same abstraction can be built on very different underlying structures.
 
 ## How it works
 
