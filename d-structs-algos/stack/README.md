@@ -1,6 +1,10 @@
 # Stack
 
-An array-backed LIFO (last-in, first-out) stack, plus a practical application: balanced bracket checking.
+A stack is one of the simplest and most useful data structures. Imagine a stack of plates — you can only add a plate to the top, and you can only take a plate from the top. The last plate you put on is the first one you take off. This "last-in, first-out" behavior is called **LIFO**.
+
+Stacks show up constantly in computing: your browser's back button is a stack of visited pages, function calls are managed on a call stack, and undo/redo systems use stacks to track history.
+
+This implementation is backed by a Python list, with a practical example: using a stack to check whether brackets are balanced.
 
 ## How it works
 
