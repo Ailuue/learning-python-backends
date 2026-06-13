@@ -1,6 +1,10 @@
 # HashMap
 
-An open-addressing hash map with linear probing and automatic resizing.
+A hash map (also called a hash table or dictionary) lets you store and retrieve values by a key in near-instant time — regardless of how many items are in the table. Think of it like a filing cabinet with labeled drawers: instead of searching through every drawer, you go directly to the one labeled with your key.
+
+Under the hood, it converts your key into an array index using a **hash function**, stores the value there, and does the same lookup when you need it back. This gives O(1) average-case performance for both storing and retrieving — much faster than searching through a list.
+
+This implementation uses **open addressing with linear probing** to handle collisions, and automatically resizes when the table gets too full.
 
 ## How it works
 
