@@ -1,6 +1,10 @@
 # Prefix Tree (Trie)
 
-A character-level trie that supports prefix search, document scanning, and leet-speak matching.
+A prefix tree (also called a **trie**, pronounced "try") is a tree-shaped data structure designed for storing and searching strings. Instead of storing each word whole, it breaks words into individual characters and shares common beginnings across words. The words "cat", "car", and "card" all travel the same path c → a → r before branching.
+
+This sharing makes prefix lookups extremely fast: to find all words starting with "car", you simply follow three branches and then collect everything below — no unrelated words are ever visited. Tries are used in autocomplete systems, spell checkers, and anywhere you need to search a large dictionary by prefix.
+
+This implementation adds document scanning and leet-speak matching on top of the basic trie operations.
 
 ## How it works
 
