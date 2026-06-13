@@ -1,6 +1,10 @@
 # Queue
 
-An array-backed FIFO (first-in, first-out) queue, plus a practical application: a multiplayer matchmaking system.
+A queue works exactly like a queue in real life — people line up, and the first person who joined the line is the first to be served. Whoever arrives first, leaves first. This "first-in, first-out" behavior is called **FIFO**.
+
+Queues are used whenever order of arrival matters: print jobs waiting for a printer, tasks waiting to be processed by a worker, or players waiting to be matched in a game lobby. Unlike a stack (which takes from the same end it adds to), a queue adds at one end and removes from the other.
+
+This implementation is backed by a Python list, with a practical example: a matchmaking system that pairs players as they join a lobby.
 
 ## How it works
 
