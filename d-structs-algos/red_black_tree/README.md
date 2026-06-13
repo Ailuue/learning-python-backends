@@ -1,6 +1,12 @@
 # Red-Black Tree
 
-A self-balancing BST that guarantees O(log n) insert regardless of insertion order.
+A red-black tree is a **self-balancing binary search tree**. To understand why that matters, you first need to understand the problem it solves.
+
+A plain binary search tree works great when the data arrives in random order — the tree stays roughly balanced and operations are fast. But if you insert data in sorted order, the tree degenerates into a chain: every node has only a right child, and you effectively end up with a slow linked list instead of a fast tree.
+
+A red-black tree prevents this by enforcing a set of **coloring rules** after every insert: each node is painted red or black, and those colors follow strict invariants that guarantee the tree can never become too lopsided. Whenever an insert would violate the rules, the tree fixes itself automatically through rotations and recoloring. The result is a guaranteed O(log n) for every operation, no matter what order data arrives in.
+
+The name comes from the fact that each node carries a color — red or black — and the rules governing those colors are what keep the tree balanced.
 
 ## The problem with a plain BST
 
