@@ -1,6 +1,8 @@
 # Data Structures & Algorithms
 
-Python implementations of common data structures, algorithms, and NP-complete problems.
+Data structures and algorithms are the building blocks of software. A **data structure** is a way of organizing data in memory so that common operations (insert, delete, search) are fast. An **algorithm** is a step-by-step procedure for solving a problem. Choosing the right data structure or algorithm for a task is often the difference between a program that runs in milliseconds and one that takes hours.
+
+This folder contains Python implementations of the most important data structures and algorithms — starting from simple linear structures (linked lists, stacks, queues) through trees, graphs, and into the theory of computational hardness (P vs NP). Each subfolder has its own README with an introduction to the concept before the implementation details.
 
 ## Data Structures
 
