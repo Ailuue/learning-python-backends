@@ -1,6 +1,10 @@
 # Merge Sort
 
-Divide-and-conquer sort: split the array in half, recursively sort each half, then merge the two sorted halves into one.
+Merge sort is built on a simple observation: it's much easier to **merge** two already-sorted lists into one sorted list than it is to sort a single unsorted list from scratch. So instead of tackling the whole problem at once, merge sort breaks it down: split the input in half, sort each half (recursively applying the same idea), then merge the two sorted halves together.
+
+This is the divide-and-conquer pattern — split a hard problem into easier subproblems, solve those, combine the results. The recursion bottoms out when a subarray has only one element, which is trivially sorted.
+
+Merge sort is one of the most important algorithms to learn because it introduces divide-and-conquer thinking and has a guaranteed O(n log n) time regardless of input order.
 
 ## How it works
 
