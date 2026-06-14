@@ -27,7 +27,6 @@ HOW TO RUN:
 
 import time
 import random
-import threading
 from concurrent import futures
 
 import grpc
