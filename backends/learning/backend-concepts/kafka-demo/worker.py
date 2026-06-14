@@ -77,19 +77,19 @@ def process_order(event: dict) -> None:
     print(f"  │   item={event['item']}  qty={event['quantity']}")
 
     if not validate_order(event):
-        print(f"  └── REJECTED: invalid order data")
+        print("  └── REJECTED: invalid order data")
         return
 
-    print(f"  │   [1/3] validated ✓")
+    print("  │   [1/3] validated ✓")
 
     if not charge_payment(event):
-        print(f"  └── FAILED: payment declined")
+        print("  └── FAILED: payment declined")
         return
 
-    print(f"  │   [2/3] payment charged ✓")
+    print("  │   [2/3] payment charged ✓")
 
     send_confirmation(event)
-    print(f"  │   [3/3] confirmation sent ✓")
+    print("  │   [3/3] confirmation sent ✓")
     print(f"  └── DONE  (latency: {(time.time() - event['created_at']) * 1000:.0f}ms from event creation)")
 
 
@@ -98,9 +98,9 @@ def process_order(event: dict) -> None:
 # ---------------------------------------------------------------------------
 
 def main():
-    print(f"=== Order Worker ===")
+    print("=== Order Worker ===")
     print(f"    topic={TOPIC}  group={GROUP_ID}")
-    print(f"    Waiting for events... (Ctrl-C to stop)\n")
+    print("    Waiting for events... (Ctrl-C to stop)\n")
 
     try:
         consumer = KafkaConsumer(
