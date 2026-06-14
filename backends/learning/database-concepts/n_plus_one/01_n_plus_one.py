@@ -44,7 +44,7 @@ def demo_lazy_one_level() -> None:
 
         # Accessing author.books inside the loop triggers a SELECT per author
         for author in authors:
-            book_titles = [b.title for b in author.books]
+            _ = [b.title for b in author.books]
 
     print(
         f"  5 authors loaded, each with ~4 books.\n"
@@ -73,13 +73,12 @@ def demo_lazy_two_levels() -> None:
             for book in author.books:
                 _ = [t.name for t in book.tags]
 
-    n_authors  = 5
-    n_books    = 20
-    n_tag_sets = 20
+    n_authors = 5
+    n_books   = 20
     print(
         f"  1 query for authors\n"
         f"  + {n_authors} queries for books (one per author)\n"
-        f"  + {n_tag_sets} queries for tags (one per book)\n"
+        f"  + {n_books} queries for tags (one per book)\n"
         f"  = {len(queries)} total queries to render what amounts to a simple nested list.\n"
         f"  Add more authors and books and this scales to hundreds or thousands.\n"
     )
