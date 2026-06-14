@@ -75,4 +75,4 @@ remaining = sqs.receive_message(QueueUrl=url, MaxNumberOfMessages=10, WaitTimeSe
 for msg in remaining:
     sqs.delete_message(QueueUrl=url, ReceiptHandle=msg["ReceiptHandle"])
 sqs.delete_queue(QueueUrl=url)
-print(f"\nCleaned up queue")
+print("\nCleaned up queue")
