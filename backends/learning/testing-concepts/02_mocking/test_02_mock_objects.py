@@ -27,7 +27,6 @@ Run:
 
 from unittest.mock import MagicMock, call
 
-import pytest
 
 from services import EmailService, PaymentService
 
