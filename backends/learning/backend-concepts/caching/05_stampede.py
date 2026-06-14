@@ -314,7 +314,7 @@ def main():
                 with _per_lock:
                     _per_store[key] = (new_serialised, new_expiry)
                 elapsed_s = t - (expiry - PER_DEMO_TTL)
-                status = f"EXPIRED MISS  (served cold)"
+                status = "EXPIRED MISS  (served cold)"
         else:
             elapsed_s = 0
             status = "COLD MISS"
