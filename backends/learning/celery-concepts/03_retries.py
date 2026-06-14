@@ -30,8 +30,6 @@ HOW TO RUN THIS FILE:
   Terminal 3:  python 03_retries.py
 """
 
-import random
-import time
 from celery_app import app
 
 
