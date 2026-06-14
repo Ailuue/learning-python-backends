@@ -64,7 +64,7 @@ def user_fixture(session):
     user = User(
         email="test@example.com",
         username="testuser",
-        hashed_password=hash_password("testpass123"),
+        password_hash=hash_password("testpass123"),
     )
     session.add(user)
     session.commit()
@@ -87,7 +87,7 @@ def other_user_fixture(session):
     user = User(
         email="other@example.com",
         username="otheruser",
-        hashed_password=hash_password("otherpass123"),
+        password_hash=hash_password("otherpass123"),
     )
     session.add(user)
     session.commit()
