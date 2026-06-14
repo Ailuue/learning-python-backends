@@ -10,7 +10,6 @@ Key naming convention:
 
 import json
 import os
-from decimal import Decimal
 
 import redis
 from dotenv import load_dotenv
