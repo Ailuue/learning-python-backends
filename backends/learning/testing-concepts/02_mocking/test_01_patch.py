@@ -22,7 +22,7 @@ Run:
 """
 
 import time
-from unittest.mock import patch, call
+from unittest.mock import patch
 
 import pytest
 
