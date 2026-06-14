@@ -95,15 +95,17 @@ async def get_product_detail(product_id: int) -> dict:
     """
     Simulates a detail-page endpoint that needs three independent pieces of data.
     In a real app these might be: the product, its reviews, and related products.
-    """
-    async with db.get_session() as session:
-        product = await session.get(Product, product_id)
 
+    The point: these queries don't depend on each other, so there's no reason to
+    run them sequentially. asyncio.gather fires them concurrently on separate
+    connections and waits for all three, so the total time is the slowest query
+    rather than the sum of all three.
+    """
     # These three calls are independent — fire them all at once.
     product_data, stock_data, price_data = await asyncio.gather(
-        _fetch_with_latency("product details",  0.04),
-        _fetch_with_latency("stock levels",     0.06),
-        _fetch_with_latency("price history",    0.05),
+        _fetch_with_latency(f"product {product_id} details", 0.04),
+        _fetch_with_latency("stock levels",                  0.06),
+        _fetch_with_latency("price history",                 0.05),
     )
 
     return {
