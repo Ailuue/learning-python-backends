@@ -60,24 +60,21 @@ env.globals["year"] = datetime.now().year
 # ---------------------------------------------------------------------------
 
 def render_html(template_name: str, **ctx) -> tuple[str, str]:
-    """Returns (subject, html_body) by rendering a template."""
+    """Returns (subject, html_body) by rendering a template.
+
+    The subject lives in a `{% block subject %}` inside each template, so we
+    render just that block to get the subject line, then render the full
+    template for the HTML body. Both share the same context.
+    """
     template = env.get_template(template_name)
     html = template.render(**ctx)
-    # Extract subject from the rendered {% block subject %} block.
-    # We render just that block by using template.module.
-    subject_block = env.parse(
-        env.loader.get_source(env, template_name)[0]
-    )
-    # Simpler: render the subject block via a small wrapper template
-    subject = env.from_string(
-        f'{{% extends "{template_name}" %}}'
-        "{% block _wrap %}{% block subject %}{% endblock %}{% endblock %}"
-    ).module._wrap if False else ""
-    # Easier in practice: derive subject from a render of just the block.
-    # Here we just use the template name as a fallback and pull it from the HTML.
-    import re
-    m = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
-    subject = m.group(1).strip() if m else template_name
+    # Render only the `subject` block. template.blocks maps each block name to
+    # a render function; joining its output gives the block's text.
+    if "subject" in template.blocks:
+        context = template.new_context(ctx)
+        subject = "".join(template.blocks["subject"](context)).strip()
+    else:
+        subject = template_name
     return subject, html
 
 
