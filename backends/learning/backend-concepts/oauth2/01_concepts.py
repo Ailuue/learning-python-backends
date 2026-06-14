@@ -56,8 +56,6 @@ Run:
     (No credentials needed — just prints URLs and explains parameters.)
 """
 
-import hashlib
-import os
 import secrets
 import urllib.parse
 
