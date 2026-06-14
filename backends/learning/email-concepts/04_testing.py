@@ -27,7 +27,7 @@ import unittest
 import urllib.request
 from email.message import EmailMessage
 from email.utils import formataddr
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import patch
 
 SMTP_HOST   = "localhost"
 SMTP_PORT   = 1025
@@ -174,7 +174,6 @@ class TestIntegrationSendWelcomeEmail(unittest.TestCase):
             f"{MAILPIT_API}/message/{msg_summary['ID']}"
         ) as resp:
             full = json.loads(resp.read())
-        content_types = [p["ContentType"] for p in full.get("Attachments", [])]
         # Mailpit exposes HTML in the top-level field
         self.assertTrue(full.get("HTML"), "Expected HTML part to be non-empty")
         self.assertTrue(full.get("Text"), "Expected plain-text part to be non-empty")
@@ -191,13 +190,12 @@ def main():
     print()
 
     loader = unittest.TestLoader()
-    suite  = unittest.TestSuite()
 
     print("Running UNIT tests (no server needed):")
     unit_suite = loader.loadTestsFromTestCase(TestSendWelcomeEmail)
     unit_suite.addTests(loader.loadTestsFromTestCase(TestSendPasswordReset))
     runner = unittest.TextTestRunner(verbosity=2)
-    unit_result = runner.run(unit_suite)
+    runner.run(unit_suite)
 
     print("\nRunning INTEGRATION tests (requires docker compose up):")
     int_suite = loader.loadTestsFromTestCase(TestIntegrationSendWelcomeEmail)
