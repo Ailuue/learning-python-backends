@@ -24,11 +24,9 @@ Run:
     pytest 03_database_testing/test_02_factories.py -v
 """
 
-import pytest
 from sqlalchemy.orm import Session
 
 import repository
-from models import Post, User
 
 
 # ---------------------------------------------------------------------------
