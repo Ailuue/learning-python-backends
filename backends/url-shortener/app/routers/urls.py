@@ -35,7 +35,7 @@ async def create_short_url(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),
 ) -> URLResponse:
-    for _ in range(_MAX_RETRIES):
+    for _attempt in range(_MAX_RETRIES):
         short_code = payload.custom_code or generate_short_code()
         url = URL(
             short_code=short_code,
