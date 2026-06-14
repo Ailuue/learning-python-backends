@@ -29,7 +29,6 @@ When to use:
 """
 
 import json
-import time
 
 import cache
 import db
@@ -100,7 +99,7 @@ def flush_pending_writes(session) -> int:
             print(f"    DB UPDATE  product {product_id}: stock {old_stock} → {product.stock}")
 
     session.commit()
-    print(f"    FLUSH      committed")
+    print("    FLUSH      committed")
     return len(coalesced)
 
 
