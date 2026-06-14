@@ -59,7 +59,7 @@ def demo_ttl_based():
         p = session.get(Product, keyboard.id)
         p.price = "999.99"
         session.commit()
-    print(f"  DB updated (price → 999.99) — cache still has old price")
+    print("  DB updated (price → 999.99) — cache still has old price")
 
     cached = cache.deserialise(cache.get(key))
     print(f"  Cache price: {cached['price']}  (stale!)")
@@ -152,7 +152,7 @@ def demo_versioned_keys():
     cache.flush_all()
 
     with db.get_session() as session:
-        products = db.seed(session)
+        db.seed(session)
 
     # Cache all three products under version 1
     with db.get_session() as session:
