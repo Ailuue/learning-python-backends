@@ -26,7 +26,6 @@ HOW TO RUN THIS FILE:
 """
 
 import time
-from celery import states
 from celery.exceptions import Ignore
 from celery_app import app
 
