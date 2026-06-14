@@ -15,11 +15,9 @@ Run:
     pytest 04_async_testing/test_02_async_db.py -v
 """
 
-import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import async_repository as repository
-from async_models import User, Post
 
 
 # ---------------------------------------------------------------------------
