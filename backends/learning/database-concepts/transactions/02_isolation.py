@@ -64,7 +64,7 @@ def demo_non_repeatable_read() -> None:
 
         cur_b.execute("UPDATE accounts SET balance = balance - 300 WHERE owner = 'Alice'")
         conn_b.commit()
-        print(f"  Tx B updates Alice: -$300 and COMMITS")
+        print("  Tx B updates Alice: -$300 and COMMITS")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
         balance_second = cur_a.fetchone()[0]
@@ -102,7 +102,7 @@ def demo_repeatable_read_prevents_it() -> None:
 
         cur_b.execute("UPDATE accounts SET balance = balance - 300 WHERE owner = 'Alice'")
         conn_b.commit()
-        print(f"  Tx B updates Alice: -$300 and COMMITS")
+        print("  Tx B updates Alice: -$300 and COMMITS")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
         balance_second = cur_a.fetchone()[0]
