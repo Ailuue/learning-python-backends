@@ -43,7 +43,7 @@ async def get_current_user(
     )
     try:
         payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
-        username: str = payload.get("sub")
+        username: str | None = payload.get("sub")
         if not username:
             raise credentials_error
     except jwt.ExpiredSignatureError:
