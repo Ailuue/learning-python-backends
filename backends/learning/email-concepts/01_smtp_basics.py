@@ -32,7 +32,6 @@ HOW TO RUN:
 """
 
 import smtplib
-import ssl
 from email.message import EmailMessage
 
 SMTP_HOST = "localhost"
