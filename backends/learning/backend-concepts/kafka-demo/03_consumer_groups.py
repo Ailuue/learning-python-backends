@@ -135,7 +135,7 @@ def demo_fanout():
     print("  EmailService received:")
     for r in results_email:
         print(f"    {r}")
-    print(f"\n  Analytics received:")
+    print("\n  Analytics received:")
     for r in results_analytics:
         print(f"    {r}")
     print(f"\n  Both groups got all {len(results_email)} messages independently.")
