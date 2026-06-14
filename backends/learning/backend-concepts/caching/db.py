@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from decimal import Decimal
 
 from dotenv import load_dotenv
-from sqlalchemy import Numeric, String, create_engine, text
+from sqlalchemy import Numeric, String, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 load_dotenv()
