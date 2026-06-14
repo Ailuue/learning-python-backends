@@ -37,8 +37,6 @@ Run:
 """
 
 import json
-import signal
-import sys
 
 from kafka import KafkaConsumer
 from kafka.errors import NoBrokersAvailable
@@ -94,9 +92,9 @@ def main():
         pass
 
     print(f"\nProcessed {count} messages.")
-    print(f"Offset is now committed. Re-running this script with the same")
+    print("Offset is now committed. Re-running this script with the same")
     print(f"group_id='{GROUP_ID}' will NOT re-read these messages.")
-    print(f"To re-read from the beginning, change group_id to something new.")
+    print("To re-read from the beginning, change group_id to something new.")
     consumer.close()
 
 
