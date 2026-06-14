@@ -73,7 +73,7 @@ async def demo_select(product_id: int) -> None:
             select(Product).where(Product.price < Decimal("80"))
         )
         cheap = result.scalars().all()
-        print(f"    Products under $80:")
+        print("    Products under $80:")
         for p in cheap:
             print(f"      {p}")
 
