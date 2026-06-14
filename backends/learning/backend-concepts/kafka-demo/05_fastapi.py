@@ -41,7 +41,7 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
 from pydantic import BaseModel
