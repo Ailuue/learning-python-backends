@@ -12,7 +12,7 @@ def test_register_user(client):
     assert data["email"] == "new@example.com"
     assert data["username"] == "newuser"
     assert "password" not in data
-    assert "hashed_password" not in data
+    assert "password_hash" not in data
 
 
 def test_register_short_password_rejected(client):
