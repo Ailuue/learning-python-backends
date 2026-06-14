@@ -4,7 +4,7 @@ In-memory data store for section 02.
 Deliberately separate from schema.py so the N+1 counter is easy to observe.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
