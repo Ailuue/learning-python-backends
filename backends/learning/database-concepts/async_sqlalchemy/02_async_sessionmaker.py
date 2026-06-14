@@ -67,10 +67,10 @@ async def demo_expire_trap(product_id: int) -> None:
         print(f"    Inside session after commit: id={product_ref.id}  name={product_ref.name!r}")
 
     # Session is now CLOSED. Accessing any expired column raises MissingGreenlet.
-    print(f"    Session closed. Accessing product_ref.name...")
+    print("    Session closed. Accessing product_ref.name...")
     try:
         _ = product_ref.name
-        print(f"    (no error — attribute was not expired yet)")
+        print("    (no error — attribute was not expired yet)")
     except MissingGreenlet as e:
         print(f"    MissingGreenlet: {e}")
     except Exception as e:
@@ -112,7 +112,7 @@ async def demo_refresh(product_id: int) -> None:
         print(f"    Before update: stock={product.stock}")
 
         # Simulate another process updating the stock directly in DB
-        from sqlalchemy import text, update
+        from sqlalchemy import update
         await session.execute(
             update(Product).where(Product.id == product_id).values(stock=99)
         )
