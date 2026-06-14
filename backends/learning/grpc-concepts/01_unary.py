@@ -25,7 +25,6 @@ HOW TO RUN:
 """
 
 import time
-import threading
 import grpc
 from concurrent import futures
 
