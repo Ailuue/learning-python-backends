@@ -21,7 +21,7 @@ Run:
     pytest 02_mocking/test_03_side_effects.py -v
 """
 
-from unittest.mock import MagicMock, patch, DEFAULT
+from unittest.mock import MagicMock, DEFAULT
 import pytest
 
 from services import EmailService
