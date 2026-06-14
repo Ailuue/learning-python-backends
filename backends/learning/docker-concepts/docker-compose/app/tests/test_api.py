@@ -18,7 +18,6 @@ HOW TO RUN:
 The key difference: exec runs inside an existing container; run spins up a new one.
 """
 
-import pytest
 from fastapi.testclient import TestClient
 
 from main import app
