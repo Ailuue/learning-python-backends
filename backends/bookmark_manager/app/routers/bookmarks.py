@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Request, status
-from sqlmodel import select
+from sqlmodel import Session, col, select
 
 from app.dependencies import CurrentUserDep, SessionDep
 from app.models import Bookmark, Category, Tag
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/bookmarks", tags=["bookmarks"])
 logger = logging.getLogger(__name__)
 
 
-def _get_or_create_tag(session, user_id: int, name: str) -> Tag:
+def _get_or_create_tag(session: Session, user_id: int, name: str) -> Tag:
     tag = session.exec(
         select(Tag).where((Tag.name == name) & (Tag.user_id == user_id))
     ).first()
@@ -30,7 +30,7 @@ def _get_or_create_tag(session, user_id: int, name: str) -> Tag:
     return tag
 
 
-def _validate_category(session, user_id: int, category_id: int | None) -> None:
+def _validate_category(session: Session, user_id: int, category_id: int | None) -> None:
     if category_id is None:
         return
     category = session.get(Category, category_id)
@@ -46,6 +46,8 @@ def create_bookmark(
     user: CurrentUserDep,
     session: SessionDep,
 ) -> Bookmark:
+    # An authenticated user is always persisted, so its primary key is set.
+    assert user.id is not None
     _validate_category(session, user.id, bookmark_in.category_id)
 
     url_str = str(bookmark_in.url)
@@ -58,10 +60,13 @@ def create_bookmark(
         user_id=user.id,
     )
 
+    # Add the bookmark to the session before linking tags. Looking up each tag
+    # triggers an autoflush, and the tag<->bookmark association only proceeds if
+    # the bookmark is already known to the session.
+    session.add(bookmark)
     for tag_name in bookmark_in.tags:
         bookmark.tags.append(_get_or_create_tag(session, user.id, tag_name))
 
-    session.add(bookmark)
     session.commit()
     session.refresh(bookmark)
 
@@ -88,8 +93,8 @@ def list_bookmarks(
     if favorite is not None:
         query = query.where(Bookmark.favorite == favorite)
     if tag is not None:
-        query = query.join(Bookmark.tags).where(Tag.name == tag)
-    query = query.order_by(Bookmark.created_at.desc()).offset(offset).limit(limit)
+        query = query.join(col(Bookmark.tags)).where(Tag.name == tag)
+    query = query.order_by(col(Bookmark.created_at).desc()).offset(offset).limit(limit)
     return list(session.exec(query).all())
 
 
