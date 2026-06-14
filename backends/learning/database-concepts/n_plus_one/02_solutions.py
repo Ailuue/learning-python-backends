@@ -109,7 +109,7 @@ def demo_selectinload_nested() -> None:
                 selectinload(db.Author.books).selectinload(db.Book.tags)
             )
         ).all()
-        result = [
+        _ = [
             (a.name, [(b.title, [t.name for t in b.tags]) for b in a.books])
             for a in authors
         ]
@@ -119,7 +119,7 @@ def demo_selectinload_nested() -> None:
         "  Query 2: SELECT books WHERE author_id IN (...)\n"
         "  Query 3: SELECT tags JOIN book_tags WHERE book_id IN (...)\n\n"
         "  Compare this to the nested lazy-load from 01_n_plus_one.py\n"
-        f"  which fired 26 queries for the same data. This fires 3.\n"
+        "  which fired 26 queries for the same data. This fires 3.\n"
     )
 
     session.close()
