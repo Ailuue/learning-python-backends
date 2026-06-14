@@ -19,11 +19,10 @@ Two verification styles appear in this file, and both matter:
 Combining both styles is idiomatic for database-backed API tests.
 """
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.models import Post, User
+from app.models import Post
 
 
 # ---------------------------------------------------------------------------
