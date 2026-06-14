@@ -31,7 +31,6 @@ HOW TO RUN:
   Open http://localhost:8025 — you should see four messages.
 """
 
-import os
 import smtplib
 from email.message import EmailMessage
 from email.utils import formataddr
