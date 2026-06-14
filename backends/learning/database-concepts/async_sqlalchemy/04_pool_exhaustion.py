@@ -67,7 +67,7 @@ async def do_work(factory, task_id: int) -> str:
 # ---------------------------------------------------------------------------
 
 async def demo_exhaustion() -> None:
-    print(f"\n=== 1. Pool exhaustion ===")
+    print("\n=== 1. Pool exhaustion ===")
     print(f"""
   pool_size={3}, max_overflow=0  →  max {3} simultaneous connections
   {N_TASKS} tasks, each holding a connection for {HOLD_SECONDS}s
@@ -99,7 +99,7 @@ async def demo_exhaustion() -> None:
 # ---------------------------------------------------------------------------
 
 async def demo_bigger_pool() -> None:
-    print(f"=== 2. Bigger pool — the easy fix ===")
+    print("=== 2. Bigger pool — the easy fix ===")
     print(f"""
   Raise pool_size to {N_TASKS} so every task gets a connection immediately.
   This works — but it means {N_TASKS} open PostgreSQL connections at all times.
@@ -132,7 +132,7 @@ async def work_outside_session(task_id: int) -> str:
         # Step 1: fetch from DB (holds connection briefly)
         async with db.get_session() as session:
             result = await session.execute(text("SELECT 1"))
-            value = result.scalar()
+            result.scalar()
 
         # Step 2: non-DB processing happens outside the session context.
         # The connection was returned to the pool after the `async with` block above.
