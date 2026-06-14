@@ -12,7 +12,6 @@ Parameterization is used throughout to verify that *every* protected route
 rejects bad auth, not just the first one you thought to check.
 """
 
-import pytest
 from fastapi.testclient import TestClient
 
 
