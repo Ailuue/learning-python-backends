@@ -2,7 +2,6 @@
 Tests for 04_types: enums, unions, interfaces, custom scalars.
 """
 
-import pytest
 import sys
 from pathlib import Path
 
