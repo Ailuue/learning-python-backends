@@ -40,7 +40,6 @@ Run:
 """
 
 import json
-import time
 
 from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
 from kafka.admin import NewTopic
