@@ -22,7 +22,7 @@ source_url = sqs.create_queue(
         }),
     },
 )["QueueUrl"]
-print(f"Source queue with redrive policy created")
+print("Source queue with redrive policy created")
 
 # --- Seed a "poison pill" message that always fails ---
 sqs.send_message(QueueUrl=source_url, MessageBody=json.dumps({"job": "bad_job", "will_fail": True}))
@@ -55,7 +55,7 @@ for round_num in range(1, 4):
         print(f"  job={body['job']}  receive_count={receive_count}  success={success}")
         if success:
             sqs.delete_message(QueueUrl=source_url, ReceiptHandle=msg["ReceiptHandle"])
-            print(f"    → Deleted (processed successfully)")
+            print("    → Deleted (processed successfully)")
         else:
             print(f"    → NOT deleted (will retry or go to DLQ after {2 - receive_count} more failures)")
 
@@ -72,4 +72,4 @@ for msg in dlq_msgs:
 # --- Cleanup ---
 sqs.delete_queue(QueueUrl=source_url)
 sqs.delete_queue(QueueUrl=dlq_url)
-print(f"\nCleaned up queues")
+print("\nCleaned up queues")
