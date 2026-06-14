@@ -66,7 +66,7 @@ def tracked_list():
     items = []               # setup
     yield items              # test receives `items`
     items.clear()            # teardown — runs after the test completes
-    print(f"\n  [teardown] tracked_list cleared")
+    print("\n  [teardown] tracked_list cleared")
 
 
 def test_append_items(tracked_list):
