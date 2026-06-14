@@ -30,7 +30,7 @@ from unittest.mock import MagicMock, create_autospec, patch
 
 import pytest
 
-from services import EmailService, PaymentService
+from services import EmailService
 
 
 # ---------------------------------------------------------------------------
