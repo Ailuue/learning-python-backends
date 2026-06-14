@@ -2,7 +2,7 @@ import os
 from contextlib import contextmanager
 
 from dotenv import load_dotenv
-from sqlalchemy import Column, ForeignKey, Integer, String, Table, Text, create_engine, event
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, create_engine, event
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship, sessionmaker
 
 load_dotenv()
