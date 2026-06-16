@@ -1,0 +1,13 @@
+# Core LLM SDKs — examples show both side by side
+anthropic>=0.40
+openai>=1.40
+
+# Embeddings: Anthropic has no first-party embeddings API and recommends Voyage AI.
+# OpenAI provides its own. Both are used in embeddings/ and rag/.
+voyageai>=0.3
+
+# Schema validation for structured outputs
+pydantic>=2.7
+
+# Loads ANTHROPIC_API_KEY / OPENAI_API_KEY / VOYAGE_API_KEY from .env
+python-dotenv>=1.0
