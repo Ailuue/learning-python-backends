@@ -6,4 +6,4 @@ One-off scripts and throwaway experiments that don't belong in a named module.
 
 | File | What it is |
 |---|---|
-| `b-tches.py` | Dice elimination game — pool of d6/d8/d10/d12, score tracking |
+| `dice_elimination.py` | Dice elimination game — pool of d6/d8/d10/d12, with Monte-Carlo simulation plus exact closed-form odds and expected score |
