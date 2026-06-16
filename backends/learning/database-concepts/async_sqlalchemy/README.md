@@ -39,10 +39,11 @@ It doesn't help (and adds complexity) for CPU-heavy work like image processing o
 ## How to run
 
 ```bash
-# Requires PostgreSQL
-docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
+# Start the shared Postgres for all database-concepts modules (first run creates
+# this module's database automatically). Skip if it's already running.
+(cd .. && docker compose up -d)
 
-pip install -r requirements.txt   # (if present, else: pip install sqlalchemy asyncpg)
+pip install -r requirements.txt
 
 python 01_async_basics.py
 python 02_async_sessionmaker.py
