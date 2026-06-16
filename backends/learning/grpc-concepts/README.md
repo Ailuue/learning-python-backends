@@ -1,5 +1,7 @@
 # gRPC Deep Dive
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Remote procedure calls with Protocol Buffers and gRPC.
 
 ## What is gRPC?
