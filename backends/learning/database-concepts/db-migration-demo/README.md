@@ -36,6 +36,19 @@ alembic upgrade head
 python seed.py
 ```
 
+## Optional: migrate the data into Postgres
+
+`migrate_data.py` copies the rows from the local SQLite `library.db` into a
+Postgres `library` database — a realistic "move off SQLite" exercise. It uses the
+shared Postgres for this folder (which already provisions the `library` database):
+
+```bash
+(cd .. && docker compose up -d)   # start the shared Postgres if it isn't running
+python migrate_data.py
+```
+
+Override the target with `DATABASE_URL` if your Postgres lives elsewhere.
+
 ## Common Alembic commands
 
 ```bash
