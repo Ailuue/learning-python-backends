@@ -1,5 +1,7 @@
 # FastAPI Tutorial
 
+> 📚 [Backend Learning](../README.md) · **Core path · step 1 of 4** · Next: [testing-concepts ➡](../testing-concepts/)
+
 Working through the official FastAPI documentation from basics to advanced patterns.
 
 ## Structure
