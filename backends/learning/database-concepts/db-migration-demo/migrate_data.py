@@ -8,13 +8,18 @@ Strategy:
      from the right value (SQLite doesn't use sequences, Postgres does).
 """
 
+import os
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from models import Author, Book
 
 SQLITE_URL = "sqlite:///./library.db"
-POSTGRES_URL = "postgresql+psycopg2://alex@localhost/library"
+POSTGRES_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg2://postgres:postgres@localhost:5432/library",
+)
 
 sqlite_engine = create_engine(SQLITE_URL)
 pg_engine = create_engine(POSTGRES_URL)
