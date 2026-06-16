@@ -1,5 +1,7 @@
 # Backend Concepts
 
+> 📚 [Backend Learning](../README.md) · **Core path · step 4 of 4** · [⬅ database-concepts](../database-concepts/) · Next: the specialized topics
+
 Focused demos for common backend patterns. Each subfolder is a self-contained runnable example.
 
 ## Modules
@@ -13,6 +15,6 @@ Focused demos for common backend patterns. Each subfolder is a self-contained ru
 | [observability/](observability/) | Structured logging, metrics, and distributed tracing |
 | [pagination/](pagination/) | Offset pagination vs cursor pagination |
 | [rate-limiting/](rate-limiting/) | Request rate limiting with SlowAPI and Redis |
-| [testing/](testing/) | FastAPI route and dependency testing with pytest |
+| [api-testing/](api-testing/) | FastAPI route and dependency testing with pytest (see also [testing-concepts/](../testing-concepts/) for testing fundamentals) |
 | [webhooks/](webhooks/) | Receiving, validating, and acknowledging webhook events |
 | [websockets/](websockets/) | Real-time bi-directional communication with WebSockets |
