@@ -7,9 +7,9 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, rela
 
 load_dotenv()
 
-_url = (
-    f"postgresql+psycopg2://{os.getenv('DB_USER', 'alex')}"
-    f":{os.getenv('DB_PASSWORD', '')}"
+_url = os.getenv("DATABASE_URL") or (
+    f"postgresql+psycopg2://{os.getenv('DB_USER', 'postgres')}"
+    f":{os.getenv('DB_PASSWORD', 'postgres')}"
     f"@{os.getenv('DB_HOST', 'localhost')}"
     f":{os.getenv('DB_PORT', '5432')}"
     f"/{os.getenv('DB_NAME', 'n_plus_one_demo')}"
