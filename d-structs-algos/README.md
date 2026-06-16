@@ -79,8 +79,25 @@ Recursive backtracking solution. Checks whether any subset of the input sums to 
 
 ## Running Tests
 
-Each folder contains a `test_*.py` file. Run any test directly:
+These tests use a small **script-style harness** — each `test_*.py` runs on
+import and prints `N passed, M failed`. They are *not* pytest tests, so run them
+as scripts, not with `pytest`.
+
+Run everything at once from this folder:
 
 ```bash
-python test_<name>.py
+python run_tests.py            # runs every test_*.py and prints a summary
+python run_tests.py sorting    # only paths matching "sorting"
 ```
+
+Or run a single test directly (from inside its folder, so it can import its
+sibling module):
+
+```bash
+cd sorting/merge_sort
+python test_merge_sort.py
+```
+
+> Running `pytest` in this folder intentionally collects nothing (see
+> `conftest.py`) — these files predate the pytest-based suites used elsewhere in
+> the repo and are kept in their original boot.dev-style harness on purpose.
