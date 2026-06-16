@@ -1,6 +1,4 @@
-"""
-02 · Relationships & N+1 — Concepts
-=====================================
+# 02 · Relationships & N+1 — Concepts
 
 CONTENTS:
   1. Resolver methods on types
@@ -8,7 +6,7 @@ CONTENTS:
   3. The N+1 problem — why it happens and how to measure it
   4. Exercises
 
---- RESOLVER METHODS ---
+## RESOLVER METHODS
 
 A method decorated with @strawberry.field on a type class becomes a
 "field resolver" — called when the client requests that field.
@@ -27,7 +25,7 @@ The method receives `self` (the current Author instance) and can use
 it to load related data. No arguments needed from the client unless
 you want to add filtering/pagination.
 
---- strawberry.Private ---
+## strawberry.Private
 
 Fields on @strawberry.type are exposed in the schema by default.
 Sometimes you need to carry internal state (like a foreign key ID)
@@ -47,7 +45,7 @@ visible in the GraphQL schema.
 strawberry.Private[T] removes the field from the generated schema
 while keeping it available in Python as a regular attribute.
 
---- THE N+1 PROBLEM ---
+## THE N+1 PROBLEM
 
 Scenario: a client queries all posts with their author names.
 
@@ -79,7 +77,7 @@ The fix is DataLoader (section 03): batch all author IDs from the
 entire post list into a SINGLE get_authors([id1, id2, id3]) call.
 Total drops from 7 to 2 (1 for posts, 1 for all authors).
 
---- MEASURING N+1 ---
+## MEASURING N+1
 
 data.py uses a QueryCounter to count and print every "DB" call.
 After running a query, check data.QueryCounter.calls.
@@ -91,7 +89,7 @@ In tests:
 
 Section 03 (DataLoaders) reduces this to 2.
 
---- EXERCISES ---
+## EXERCISES
 
 1. Query all posts without requesting the author field.
    Check QueryCounter.calls — it should be 1 (just the posts list).
@@ -108,8 +106,10 @@ Section 03 (DataLoaders) reduces this to 2.
    post's author (circular). What does GraphQL do?
    (It follows the resolvers to their natural conclusion — infinite
    loops are possible if you don't add depth limiting.)
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 N_PLUS_ONE_EXAMPLE = {
     "query":          "{ posts { author { name } } }",
     "n_posts":        6,
@@ -124,3 +124,5 @@ PRIVATE_FIELD_PATTERN = {
     "effect":    "Not included in the generated SDL or introspection response",
     "use_cases": ["Foreign key IDs for DataLoader", "Request-scoped metadata", "Internal flags"],
 }
+```
+
