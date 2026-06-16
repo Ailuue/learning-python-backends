@@ -1,5 +1,7 @@
 # AWS Core Services with LocalStack
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Practice the core AWS services locally — no AWS account or billing required.
 LocalStack emulates AWS APIs on `http://localhost:4566`.
 
