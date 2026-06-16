@@ -1,6 +1,4 @@
-"""
-05 · Mutations — Concepts
-==========================
+# 05 · Mutations — Concepts
 
 CONTENTS:
   1. Mutation mechanics — how mutations differ from queries
@@ -10,7 +8,7 @@ CONTENTS:
   5. Error handling strategies compared
   6. Exercises
 
---- MUTATION MECHANICS ---
+## MUTATION MECHANICS
 
 Mutations look like queries but:
   1. They use the `mutation` keyword
@@ -34,7 +32,7 @@ Variables (the right way in apps):
 
     Variables: { "input": { "title": "Learn mutations", "priority": 2 } }
 
---- INPUT TYPES IN DEPTH ---
+## INPUT TYPES IN DEPTH
 
 @strawberry.input creates a plain data container — no resolver methods allowed.
 
@@ -70,7 +68,7 @@ UNSET vs None:
     if input.bio is not strawberry.UNSET:
         user.bio = input.bio   # includes setting to null
 
---- PATTERN A: SIMPLE RETURNS ---
+## PATTERN A: SIMPLE RETURNS
 
 Pros:
   - Simple to implement and read
@@ -86,7 +84,7 @@ Cons:
         ...
         return None   # is this "not found" or "something went wrong"?
 
---- PATTERN B: MUTATION PAYLOAD ---
+## PATTERN B: MUTATION PAYLOAD
 
 The recommended pattern. Return a union of success + possible error types.
 
@@ -120,7 +118,7 @@ Cons:
   - More types to define
   - More verbose queries (inline fragments required)
 
---- ERROR HANDLING STRATEGIES COMPARED ---
+## ERROR HANDLING STRATEGIES COMPARED
 
 Strategy 1: Simple null + HTTP errors
   return None on not found, raise Exception (becomes HTTP 500)
@@ -143,7 +141,7 @@ Rule of thumb:
   - Expected failures (not found, validation) → mutation payload union
   - Unexpected failures (DB down, bug)         → let them become GraphQL errors
 
---- EXERCISES ---
+## EXERCISES
 
 1. Call createTodo with an empty title:
        mutation {
@@ -181,8 +179,10 @@ Rule of thumb:
    Call toggleDoneSimple with a missing ID — it returns null.
    Call updateTodo with a missing ID — it returns TodoNotFound with a message.
    Which is more useful to clients?
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 MUTATION_PATTERNS = {
     "Simple (nullable)":       "Return T? — null on failure, no error detail",
     "Simple (bool)":           "Return Boolean — true/false, no entity returned",
@@ -194,3 +194,5 @@ UNSET_VS_NONE = {
     "strawberry.UNSET": "Client didn't send this field — leave it unchanged",
     "use_case":         "PATCH-style partial update where null and absent differ",
 }
+```
+
