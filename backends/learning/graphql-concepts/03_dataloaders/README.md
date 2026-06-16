@@ -1,6 +1,4 @@
-"""
-03 · DataLoaders — Concepts
-============================
+# 03 · DataLoaders — Concepts
 
 CONTENTS:
   1. What a DataLoader does
@@ -11,7 +9,7 @@ CONTENTS:
   6. Using context to pass loaders to resolvers
   7. Exercises
 
---- WHAT A DATALOADER DOES ---
+## WHAT A DATALOADER DOES
 
 Problem: N post resolvers each call get_author(id) independently
 → N separate queries to the database.
@@ -28,7 +26,7 @@ DataLoader solution:
 
 Result: N individual DB calls → 1 batch call. Always.
 
---- THE BATCHING MECHANISM ---
+## THE BATCHING MECHANISM
 
 DataLoaders use the event loop's "tick" to collect keys:
 
@@ -43,7 +41,7 @@ In Strawberry, the executor awaits all field resolvers in the same
 depth level simultaneously. This is why "all post.author resolvers
 run in the same tick" — Strawberry schedules them all before awaiting.
 
---- PER-REQUEST LIFECYCLE ---
+## PER-REQUEST LIFECYCLE
 
 CRITICAL: create a new DataLoader for each request.
 
@@ -58,7 +56,7 @@ Why? The DataLoader caches keys within its lifetime. If you share one
 DataLoader across requests, a cached author from request 1 might be
 served to request 2, even after the author was updated.
 
---- THE ORDERING CONTRACT ---
+## THE ORDERING CONTRACT
 
 Your batch function MUST return results in the SAME ORDER as the input keys:
 
@@ -72,7 +70,7 @@ NOT:
 
 If the order doesn't match, callers receive wrong data silently.
 
---- CACHING WITHIN A REQUEST ---
+## CACHING WITHIN A REQUEST
 
 The DataLoader caches results within one request. If two fields in the
 same query ask for the same author, the second load() returns the cached
@@ -89,7 +87,7 @@ result without a second batch call.
 To disable caching (e.g., for write-heavy operations):
     DataLoader(load_fn=batch_load, cache=False)
 
---- USING CONTEXT TO PASS LOADERS ---
+## USING CONTEXT TO PASS LOADERS
 
 Resolvers access the DataLoader via info.context:
 
@@ -108,7 +106,7 @@ For FastAPI, use a context_getter:
 
     router = GraphQLRouter(schema, context_getter=get_context)
 
---- EXERCISES ---
+## EXERCISES
 
 1. Verify the improvement:
    Add prints to batch_load_authors() and run the posts+author query.
@@ -127,8 +125,10 @@ For FastAPI, use a context_getter:
    Add a counter to batch_load_authors.
    Run: { post(id: "p1") { author { name } } }  twice in the same context.
    The second query should hit the cache — batch_load fires once total.
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 DATALOADER_LIFECYCLE = [
     "1. Resolver calls loader.load(key) — returns a coroutine, does not query",
     "2. All resolvers in the same depth level do the same",
@@ -148,3 +148,5 @@ COMMON_MISTAKES = {
     "sync_load":        "Calling loader.load() without await → resolver returns a coroutine",
     "missing_context":  "Not passing context to schema.execute() → info.context is None",
 }
+```
+
