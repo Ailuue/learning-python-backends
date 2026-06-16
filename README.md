@@ -1,6 +1,9 @@
-# Learning Python
+# Learning Backend Engineering with Python
 
-A personal repo for practicing and learning Python — backend engineering, data structures, and more.
+A public, open learning resource for backend engineering with Python — from CS
+fundamentals through FastAPI, databases, auth, messaging, and AI/LLM integration,
+up to full capstone projects. Every module is concept-focused, self-contained, and
+runnable. Anyone is welcome to clone it, work through it at their own pace, and learn.
 
 ## Structure
 
@@ -23,7 +26,7 @@ step stands alone, so skip ahead if a topic is already familiar.
 4. **[backends/learning/testing-concepts/](backends/learning/testing-concepts/)** — pytest, mocking, async tests. 🟢
 5. **[backends/learning/database-concepts/](backends/learning/database-concepts/)** — persistence with SQLAlchemy + Postgres. 🐘
 6. **[backends/learning/backend-concepts/](backends/learning/backend-concepts/)** — auth, caching, rate limiting, pagination, real-time. 🟢/🔴
-7. **Specialized topics, as needed** — graphql, grpc, celery, email, aws, docker, github-actions, makefile.
+7. **Specialized topics, as needed** — ai (LLM APIs, RAG, agents), graphql, grpc, celery, email, aws, docker, github-actions, makefile.
 8. **Capstone projects** — read and run [url-shortener](backends/url-shortener/) first, then the fuller [bookmark_manager](backends/bookmark_manager/). 🐘🔴
 
 ### What each module needs to run
@@ -34,7 +37,7 @@ step stands alone, so skip ahead if a topic is already familiar.
 | 🐘 | PostgreSQL (the `database-concepts` folder ships a one-command shared Docker setup) |
 | 🔴 | Redis |
 | 🐳 | Docker / Docker Compose |
-| ☁️ | An external or cloud service (AWS via LocalStack, GitHub OAuth, an SMTP server) |
+| ☁️ | An external or cloud service (a paid LLM API, AWS via LocalStack, GitHub OAuth, an SMTP server) |
 
 Each module's README states exactly what it needs and how to start it.
 
@@ -48,6 +51,7 @@ Each module's README states exactly what it needs and how to start it.
 - [fast-api-tutorial](backends/learning/fast-api-tutorial/) — FastAPI basics through advanced patterns
 - [database-concepts](backends/learning/database-concepts/) — SQLAlchemy, migrations, indexes, transactions, full-text search, pgvector
 - [backend-concepts](backends/learning/backend-concepts/) — auth, caching, rate limiting, pagination, webhooks, WebSockets, Kafka, OAuth2
+- [ai-concepts](backends/learning/ai-concepts/) — LLM APIs, prompt engineering, structured outputs, tool use, embeddings, RAG, evaluation, guardrails; Claude & OpenAI side by side (paid APIs)
 - [testing-concepts](backends/learning/testing-concepts/) — pytest, mocking, database testing, async testing
 - [docker-concepts](backends/learning/docker-concepts/) — multi-stage builds, Compose, debugging, reverse proxy, security, CI/CD
 - [aws-concepts](backends/learning/aws-concepts/) — S3, Lambda, SQS, SNS, DynamoDB
@@ -55,6 +59,8 @@ Each module's README states exactly what it needs and how to start it.
 - [grpc-concepts](backends/learning/grpc-concepts/) — gRPC with Protocol Buffers
 - [celery-concepts](backends/learning/celery-concepts/) — task queues with Celery + Redis
 - [email-concepts](backends/learning/email-concepts/) — SMTP, IMAP, templating, testing email
+- [github-actions](backends/learning/github-actions/) — CI/CD workflows
+- [makefile-concepts](backends/learning/makefile-concepts/) — Makefile patterns for backend projects
 
 ## Setup
 
