@@ -43,8 +43,11 @@ Normalization reduces redundancy but can require more JOINs to query data. For r
 ## How to run
 
 ```bash
-# Requires PostgreSQL
-docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
+# Start the shared Postgres for all database-concepts modules (first run creates
+# this module's database automatically). Skip if it's already running.
+(cd .. && docker compose up -d)
+
+pip install -r requirements.txt
 
 python 01_unnormalized.py
 python 02_1nf.py
