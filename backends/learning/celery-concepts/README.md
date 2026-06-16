@@ -1,5 +1,7 @@
 # Celery Deep Dive
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Background job processing with Celery and Redis.
 
 ## Architecture
