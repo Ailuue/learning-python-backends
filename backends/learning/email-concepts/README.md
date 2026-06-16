@@ -1,5 +1,7 @@
 # Email Concepts
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Sending, building, templating, testing, and reading email from Python.
 
 ## The email stack in one picture
