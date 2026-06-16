@@ -1,5 +1,7 @@
 # GitHub Actions
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 ## What is this?
 
 GitHub Actions is GitHub's built-in CI/CD platform. Every workflow is a YAML file in `.github/workflows/`. GitHub runs these automatically on the triggers you define — pushes, PRs, tags, schedules, or manual dispatch.
@@ -16,7 +18,7 @@ This module covers the four workflow patterns every backend engineer needs:
 
 The first three have live workflow files that will run on this repo. The last two are concept notes with annotated YAML examples — they require external deployment infrastructure to actually run.
 
-> **See also:** `.github/workflows/docker-cicd.yml` + `docker-concepts/docker-cicd/notes_cicd.py` for Docker build/push patterns.
+> **See also:** `.github/workflows/docker-cicd.yml` + `docker-concepts/docker-cicd/README.md` for Docker build/push patterns.
 
 ## How Actions are structured
 
