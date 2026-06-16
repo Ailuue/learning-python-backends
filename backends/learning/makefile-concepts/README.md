@@ -1,5 +1,7 @@
 # Makefile Concepts
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Practical Makefile examples you can run and poke at. Each section is a
 standalone directory — `cd` in and run `make` or `make help`.
 
