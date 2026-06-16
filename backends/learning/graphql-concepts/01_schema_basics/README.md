@@ -1,6 +1,4 @@
-"""
-01 · Schema Basics — Concepts & Query Reference
-================================================
+# 01 · Schema Basics — Concepts & Query Reference
 
 CONTENTS:
   1. GraphQL vs REST — the key difference
@@ -11,7 +9,7 @@ CONTENTS:
   6. Introspection — asking the schema what it supports
   7. Exercises
 
---- GRAPHQL vs REST ---
+## GRAPHQL vs REST
 
 REST: the server decides what's in the response.
   GET /books/1  →  {"id": 1, "title": "...", "author": "...", "year": ..., "description": "..."}
@@ -22,7 +20,7 @@ GraphQL: the CLIENT decides what fields it needs.
 The client only gets what it asks for — no over-fetching.
 The client can ask for multiple resources in one request — no under-fetching.
 
---- SDL (Schema Definition Language) ---
+## SDL (Schema Definition Language)
 
 Strawberry generates this schema from your Python code.
 You can view it with: print(schema.as_str())
@@ -54,7 +52,7 @@ You can view it with: print(schema.as_str())
 
 The ! means non-nullable. Fields without ! can return null.
 
---- THE TYPE SYSTEM ---
+## THE TYPE SYSTEM
 
 Built-in scalars (leaf types — no sub-fields):
   String    UTF-8 text
@@ -75,7 +73,7 @@ Python → GraphQL mapping (Strawberry):
 Custom scalars (for types like datetime, UUID, JSON):
   @strawberry.scalar(serialize=..., parse_value=...)
 
---- QUERIES ---
+## QUERIES
 
 Basic field selection:
     query {
@@ -121,7 +119,7 @@ Fragments — reuse a field selection:
       books { ...BookFields }
     }
 
---- MUTATIONS ---
+## MUTATIONS
 
 Basic mutation:
     mutation {
@@ -156,7 +154,7 @@ Delete:
       deleteBook(id: "1")
     }
 
---- INTROSPECTION ---
+## INTROSPECTION
 
 Ask the schema what types it supports:
     query {
@@ -174,7 +172,7 @@ Ask about a specific type:
 
 The playground's autocomplete and docs panel use introspection automatically.
 
---- EXERCISES ---
+## EXERCISES
 
 1. Query all books — request only id and title (exclude author and year).
    Notice the response only contains what you asked for.
@@ -193,8 +191,10 @@ The playground's autocomplete and docs panel use introspection automatically.
    Compare with the SDL shown above.
 
 6. Use an alias to fetch two different books in one request.
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 SCALAR_TYPES = {
     "String":  "UTF-8 text — Python str",
     "Int":     "32-bit integer — Python int",
@@ -220,3 +220,5 @@ KEY_DECORATORS = {
     "@strawberry.mutation": "Marks a method as a mutation field",
     "strawberry.Schema":    "The entry point — wires query/mutation/subscription",
 }
+```
+
