@@ -13,7 +13,7 @@ def get_connection():
         port=int(os.getenv("DB_PORT", "5432")),
         dbname=os.getenv("DB_NAME", "window_functions"),
         user=os.getenv("DB_USER", "postgres"),
-        password=os.getenv("DB_PASSWORD", ""),
+        password=os.getenv("DB_PASSWORD", "postgres"),
     )
 
 
