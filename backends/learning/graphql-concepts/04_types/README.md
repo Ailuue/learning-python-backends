@@ -1,6 +1,4 @@
-"""
-04 · Types — Concepts
-======================
+# 04 · Types — Concepts
 
 CONTENTS:
   1. Enums
@@ -11,7 +9,7 @@ CONTENTS:
   6. Inline fragments — querying union / interface fields
   7. Exercises
 
---- ENUMS ---
+## ENUMS
 
     @strawberry.enum
     class Genre:
@@ -30,7 +28,7 @@ Benefits:
   - Documented: introspection shows all options
   - Refactoring-safe: rename in one place
 
---- CUSTOM SCALARS ---
+## CUSTOM SCALARS
 
 GraphQL has 5 built-in scalars. For everything else (dates, UUIDs, JSON,
 money, email), define a custom scalar:
@@ -60,7 +58,7 @@ Common custom scalars:
   UUID     — uuid.UUID      →  "550e8400-e29b-41d4-a716-446655440000"
   JSON     — dict           →  raw JSON object
 
---- INTERFACES ---
+## INTERFACES
 
     @strawberry.interface
     class Publishable:
@@ -97,7 +95,7 @@ type-specific fields need an inline fragment.
       }
     }
 
---- UNIONS ---
+## UNIONS
 
     SearchResult = strawberry.union("SearchResult", types=(Article, Video))
 
@@ -122,7 +120,7 @@ Use __typename to know which type you got:
       }
     }
 
---- INTERFACE vs UNION ---
+## INTERFACE vs UNION
 
 Interface: types share a common shape (shared fields accessible without fragments)
 Union:      types have nothing in common (always need inline fragments)
@@ -137,7 +135,7 @@ Use union when:
   - There are no meaningful shared fields
   - You need a "result OR error" type (see section 05)
 
---- EXERCISES ---
+## EXERCISES
 
 1. Query articles filtered by genre:
        { articlesByGenre(genre: NON_FICTION) { title } }
@@ -161,8 +159,10 @@ Use union when:
 
 6. Add a Podcast type that also implements Publishable.
    Update the union and query to include podcasts.
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 INTERFACE_VS_UNION = {
     "Interface": "Types share fields — query shared fields without fragments",
     "Union":     "Types unrelated — always need inline fragments",
@@ -193,3 +193,5 @@ query {
   }
 }
 """
+```
+
