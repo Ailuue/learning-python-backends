@@ -27,8 +27,9 @@ A keyword search for "fast car" misses "quick vehicle" or "speedy automobile". E
 # 1. Install and start Ollama, then pull the model
 ollama pull nomic-embed-text
 
-# 2. Start PostgreSQL with pgvector
-docker compose up -d
+# 2. Start the shared Postgres (the pgvector image; the `vector` extension is
+#    enabled in the pgvector_demo database automatically on first run)
+(cd .. && docker compose up -d)
 
 # 3. Apply migrations and seed data
 pip install -r requirements.txt
