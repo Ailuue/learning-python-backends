@@ -12,8 +12,8 @@ def get_connection(autocommit: bool = False) -> psycopg2.extensions.connection:
         host=os.getenv("DB_HOST", "localhost"),
         port=int(os.getenv("DB_PORT", "5432")),
         dbname=os.getenv("DB_NAME", "transactions_demo"),
-        user=os.getenv("DB_USER", "alex"),
-        password=os.getenv("DB_PASSWORD", ""),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", "postgres"),
     )
     conn.autocommit = autocommit
     return conn
