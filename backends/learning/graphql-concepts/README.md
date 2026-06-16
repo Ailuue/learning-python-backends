@@ -1,5 +1,7 @@
 # GraphQL Concepts
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Hands-on GraphQL practice using **Strawberry** (Python) and **FastAPI**.
 Each section is self-contained with a runnable schema, concept notes, and tests.
 
@@ -30,8 +32,8 @@ pip install -r requirements.txt
 
 Each section has:
 - `schema.py` — the runnable schema with inline comments
-- `notes.py` — concept explanations, query examples, exercises
-- `test_schema.py` — pytest tests
+- `README.md` — concept explanations, query examples, exercises
+- `test_*.py` — pytest tests
 
 ## Run the tests
 
