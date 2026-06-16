@@ -1,5 +1,7 @@
 # Docker Concepts
 
+> 📚 [Backend Learning](../README.md) · **Specialized topic** — best after the core path.
+
 Hands-on Docker modules, from the basics of multi-stage builds to production patterns like reverse proxying and CI/CD.
 
 ## Modules
