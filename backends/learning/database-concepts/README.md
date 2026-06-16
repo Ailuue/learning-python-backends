@@ -1,5 +1,7 @@
 # Database Concepts
 
+> 📚 [Backend Learning](../README.md) · **Core path · step 3 of 4** · [⬅ testing-concepts](../testing-concepts/) · Next: [backend-concepts ➡](../backend-concepts/)
+
 PostgreSQL and SQLAlchemy patterns, each in a self-contained runnable folder.
 
 ## Quick start — one Postgres for the whole folder
@@ -17,7 +19,7 @@ That's it — the connection defaults baked into each module's `db.py` already m
 so you don't need a `.env` file. Then run any module:
 
 ```bash
-cd n_plus_one
+cd n-plus-one
 pip install -r requirements.txt
 python 01_n_plus_one.py
 ```
@@ -34,12 +36,12 @@ When you're done: `docker compose down` (keep data) or `docker compose down -v` 
 
 | Folder | What it covers |
 |---|---|
-| [async_sqlalchemy/](async_sqlalchemy/) | Async SQLAlchemy sessions, `asyncpg` driver, `async with` session patterns |
+| [async-sqlalchemy/](async-sqlalchemy/) | Async SQLAlchemy sessions, `asyncpg` driver, `async with` session patterns |
 | [db-migration-demo/](db-migration-demo/) | Alembic schema migrations: create, alter, seed, roll back |
-| [full_text_search/](full_text_search/) | PostgreSQL `tsvector` / `tsquery` full-text search with ranking |
+| [full-text-search/](full-text-search/) | PostgreSQL `tsvector` / `tsquery` full-text search with ranking |
 | [indexes/](indexes/) | B-tree, partial, composite, and expression indexes — when and why |
-| [n_plus_one/](n_plus_one/) | The N+1 query problem and how `joinedload` / `selectinload` fix it |
+| [n-plus-one/](n-plus-one/) | The N+1 query problem and how `joinedload` / `selectinload` fix it |
 | [normalization/](normalization/) | 1NF → 3NF normalization with practical schema examples |
 | [pgvector-demo/](pgvector-demo/) | Vector similarity search with `pgvector` and local Ollama embeddings |
 | [transactions/](transactions/) | ACID transactions, savepoints, isolation levels, and rollback patterns |
-| [window_functions/](window_functions/) | `ROW_NUMBER`, `RANK`, `LAG`, `LEAD`, running totals, and moving averages |
+| [window-functions/](window-functions/) | `ROW_NUMBER`, `RANK`, `LAG`, `LEAD`, running totals, and moving averages |
