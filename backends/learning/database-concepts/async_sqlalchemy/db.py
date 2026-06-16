@@ -45,7 +45,10 @@ def make_engine(
     pool_pre_ping — send SELECT 1 before using a connection to detect stale ones
     """
     return create_async_engine(
-        os.environ["DATABASE_URL"],
+        os.getenv(
+            "DATABASE_URL",
+            "postgresql+asyncpg://postgres:postgres@localhost:5432/async_pool_demo",
+        ),
         pool_size=pool_size,
         max_overflow=max_overflow,
         pool_timeout=pool_timeout,
