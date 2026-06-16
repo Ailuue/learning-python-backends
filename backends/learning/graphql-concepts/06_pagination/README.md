@@ -1,6 +1,4 @@
-"""
-06 · Pagination — Concepts
-===========================
+# 06 · Pagination — Concepts
 
 CONTENTS:
   1. Why paginate — why not return everything
@@ -10,7 +8,7 @@ CONTENTS:
   5. Relay Connection spec in detail
   6. Exercises
 
---- WHY PAGINATE ---
+## WHY PAGINATE
 
 A list query with no pagination:
     { posts { id title body } }     # 1,000,000 posts? The server dies.
@@ -18,7 +16,7 @@ A list query with no pagination:
 Every list that can grow unboundedly needs pagination.
 Design it from the start — retrofitting pagination is painful.
 
---- OFFSET PAGINATION ---
+## OFFSET PAGINATION
 
     query {
       postsPage(offset: 20, limit: 10) {
@@ -42,7 +40,7 @@ Cons:
       - Item 10 is skipped entirely — you never see it
   - Expensive for large offsets in SQL (OFFSET 1000000 scans 1M rows)
 
---- CURSOR PAGINATION ---
+## CURSOR PAGINATION
 
     query {
       postsConnection(first: 10) {
@@ -76,7 +74,7 @@ Cons:
   - More complex to implement
   - Cursors are opaque (clients can't interpret them)
 
---- WHEN TO USE EACH ---
+## WHEN TO USE EACH
 
 Use offset when:
   - Users navigate by page number ("Go to page 5")
@@ -89,7 +87,7 @@ Use cursor when:
   - Large datasets
   - Consistency matters
 
---- RELAY CONNECTION SPEC ---
+## RELAY CONNECTION SPEC
 
 The Relay specification (from Facebook/Meta) defines a standard cursor
 pagination interface. Clients built for Relay understand this shape.
@@ -126,7 +124,7 @@ Cursors are opaque base64 strings. Our implementation encodes "post:<id>":
 The Relay spec says cursors should be opaque — clients MUST NOT
 parse or construct them, only pass them back to the server.
 
---- STRAWBERRY.RELAY ---
+## STRAWBERRY.RELAY
 
 Strawberry provides built-in Relay support in `strawberry.relay`:
 
@@ -151,7 +149,7 @@ Strawberry provides built-in Relay support in `strawberry.relay`:
 This generates the full Connection/Edge/PageInfo types automatically.
 The manual implementation in schema.py shows what it's doing internally.
 
---- EXERCISES ---
+## EXERCISES
 
 1. Fetch the first page (offset=0, limit=5):
        { postsPage(offset: 0, limit: 5) { items { id title } total hasNextPage } }
@@ -174,8 +172,10 @@ The manual implementation in schema.py shows what it's doing internally.
    import base64
    cursor = "cG9zdDoxMA=="
    base64.b64decode(cursor).decode()  # → "post:10"
-"""
 
+## Quick reference (preserved from the original notes)
+
+```python
 PAGINATION_COMPARISON = {
     "Offset": {
         "query_args":  "offset: Int, limit: Int",
@@ -196,3 +196,5 @@ RELAY_SHAPE = {
     "page_args":  "first: Int, after: String  (or last + before for backward)",
     "cursor":     "Opaque base64 string — do not parse client-side",
 }
+```
+
