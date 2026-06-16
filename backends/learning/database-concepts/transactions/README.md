@@ -41,8 +41,11 @@ Most databases default to **Read Committed**. PostgreSQL defaults to **Read Comm
 ## How to run
 
 ```bash
-# Requires PostgreSQL
-docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
+# Start the shared Postgres for all database-concepts modules (first run creates
+# this module's database automatically). Skip if it's already running.
+(cd .. && docker compose up -d)
+
+pip install -r requirements.txt
 
 python 01_acid.py
 python 02_isolation.py
