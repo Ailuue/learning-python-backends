@@ -1,5 +1,7 @@
 # Testing
 
+> 📚 [Backend Learning](../README.md) · **Core path · step 2 of 4** · [⬅ fast-api-tutorial](../fast-api-tutorial/) · Next: [database-concepts ➡](../database-concepts/)
+
 ## What is this?
 
 Writing tests is as important as writing the code itself. A good test suite lets you refactor with confidence, catch regressions before they ship, and document intended behaviour in executable form.
