@@ -1,0 +1,34 @@
+# Shared Postgres for EVERY database-concepts module.
+# One container provisions all the per-module demo databases on first start,
+# so you only run this once for the whole folder.
+#
+#   docker compose up -d     # start; creates all demo databases on first run
+#   docker compose down      # stop, keep your data
+#   docker compose down -v   # stop and wipe data (re-provisions on next `up`)
+#
+# Connection (matches the defaults baked into every module's db.py):
+#   host=localhost  port=5432  user=postgres  password=postgres
+#
+# Uses the pgvector image (Postgres 16 + the `vector` extension) so the
+# pgvector-demo module works against this same container with no extra setup.
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: database-concepts-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
