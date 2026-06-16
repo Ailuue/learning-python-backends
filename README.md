@@ -12,6 +12,32 @@ A personal repo for practicing and learning Python — backend engineering, data
 | [utility_examples/](utility_examples/) | Standalone scripts: argparse, asyncio, ETL pipeline |
 | [experiments/](experiments/) | One-off scripts and throwaway experiments |
 
+## Suggested learning path
+
+New here? This is the order the material is designed to be worked through. Each
+step stands alone, so skip ahead if a topic is already familiar.
+
+1. **[d-structs-algos/](d-structs-algos/)** — warm up CS fundamentals in Python (no setup). 🟢
+2. **[utility_examples/](utility_examples/)** — core Python idioms: argparse, asyncio, an ETL pipeline. 🟢
+3. **[backends/learning/fast-api-tutorial/](backends/learning/fast-api-tutorial/)** — your first FastAPI app. 🟢
+4. **[backends/learning/testing-concepts/](backends/learning/testing-concepts/)** — pytest, mocking, async tests. 🟢
+5. **[backends/learning/database-concepts/](backends/learning/database-concepts/)** — persistence with SQLAlchemy + Postgres. 🐘
+6. **[backends/learning/backend-concepts/](backends/learning/backend-concepts/)** — auth, caching, rate limiting, pagination, real-time. 🟢/🔴
+7. **Specialized topics, as needed** — graphql, grpc, celery, email, aws, docker, github-actions, makefile.
+8. **Capstone projects** — read and run [url-shortener](backends/url-shortener/) first, then the fuller [bookmark_manager](backends/bookmark_manager/). 🐘🔴
+
+### What each module needs to run
+
+| Icon | Meaning |
+|---|---|
+| 🟢 | No infrastructure — pure Python, SQLite, or in-memory |
+| 🐘 | PostgreSQL (the `database-concepts` folder ships a one-command shared Docker setup) |
+| 🔴 | Redis |
+| 🐳 | Docker / Docker Compose |
+| ☁️ | An external or cloud service (AWS via LocalStack, GitHub OAuth, an SMTP server) |
+
+Each module's README states exactly what it needs and how to start it.
+
 ## Backends
 
 ### Projects
@@ -35,7 +61,25 @@ A personal repo for practicing and learning Python — backend engineering, data
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt  # root-level dependencies
+pip install -r requirements.txt  # root-level deps: FastAPI, pytest, the tutorials
 ```
 
-Most learning modules have their own `requirements.txt` and `docker-compose.yml`. See each folder's README for setup instructions.
+### Dependencies are per-folder, by design
+
+There is **no single requirements file for the whole repo**. The root
+`requirements.txt` covers the FastAPI tutorial and the lightweight concept demos.
+Each capstone project and many learning modules pin their own heavier dependency
+sets (Celery, Redis, SQLAlchemy drivers, Strawberry, boto3, …) in a local
+`requirements.txt`.
+
+So when you enter a project or module that has its own `requirements.txt`,
+install it — otherwise you'll hit `ModuleNotFoundError`:
+
+```bash
+cd backends/bookmark_manager
+pip install -r requirements.txt        # into the same venv is fine
+python -m pytest                        # 46 tests, in-memory SQLite, no infra
+```
+
+Each folder's README states what it needs. Modules that require a service
+(PostgreSQL, Redis, Kafka, …) ship a `docker-compose.yml` or point at a shared one.
