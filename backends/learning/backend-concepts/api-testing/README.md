@@ -1,8 +1,11 @@
-# Testing (Backend Concepts)
+# API Testing
 
-A minimal FastAPI app used to practice core testing patterns with pytest.
+A minimal FastAPI app used to practice testing **HTTP routes and dependencies**
+end-to-end with pytest and `TestClient`.
 
-For a deeper treatment of testing topics, see [testing-concepts/](../../testing-concepts/).
+> **Not to be confused with [testing-concepts/](../../testing-concepts/)**, which
+> teaches testing *fundamentals* (pytest mechanics, mocking, fixtures, async).
+> Start there for the basics; come here to see them applied to a real API.
 
 ## What's here
 
