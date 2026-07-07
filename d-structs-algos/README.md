@@ -81,7 +81,7 @@ Recursive backtracking solution. Checks whether any subset of the input sums to 
 
 Everything above builds structures from scratch; [patterns/](patterns/) trains
 the complementary skill — **recognizing which pattern a problem is asking
-for** — with 30 classic problems across eight families, plus a
+for** — with 40+ classic problems across eleven families, plus a
 signal-to-pattern table and a suggested practice loop.
 
 ### [Heap / Priority Queue](patterns/heap/)
@@ -115,6 +115,18 @@ A matrix is a graph: connected regions (DFS) and fewest-steps (BFS).
 ### [Binary Search on the Answer](patterns/binary_search_answer/)
 Rotated arrays, and searching a *range of answers* with a monotonic check.
 - `search_rotated`, `find_min_rotated`, `min_eating_speed`, `ship_within_days`
+
+### [Monotonic Stack](patterns/monotonic_stack/)
+"Next/previous greater or smaller element" in one O(n) pass, each item pushed and popped once.
+- `next_greater`, `daily_temperatures`, `largest_rectangle`, `trapping_rain_water`
+
+### [Union-Find](patterns/union_find/)
+Connectivity and grouping as edges arrive — path compression + union by rank.
+- `UnionFind`, `count_components`, `has_redundant_connection`, `num_provinces`
+
+### [Trie (Word Problems)](patterns/trie/)
+The [prefix_tree](prefix_tree/) structure as an interview pattern: prefixes, wildcards, grid word-search.
+- `Trie`, `WordDictionary`, `replace_words`, `find_words_on_board`
 
 ## Running Tests
 

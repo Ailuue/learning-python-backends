@@ -16,10 +16,13 @@ and reaching for the matching tool.
 | a **matrix** + "connected regions / reachable / fewest steps" | **grid BFS/DFS** | [grid/](grid/) |
 | a list of **`[start, end]`** pairs + "overlap / merge / schedule" | **intervals** (sort first) | [intervals/](intervals/) |
 | "rotated sorted array", "min/max X such that a condition holds" | **binary search on the answer** | [binary_search_answer/](binary_search_answer/) |
+| "next/previous greater or smaller element", "largest rectangle" | **monotonic stack** | [monotonic_stack/](monotonic_stack/) |
+| "connected components / merge groups / detect a cycle" as edges arrive | **union-find** | [union_find/](union_find/) |
+| "prefix / autocomplete / dictionary of words", wildcard search | **trie** | [trie/](trie/) |
 
 Each folder has a README explaining the pattern, one module of classic problems
 solved in the pattern's canonical form, and a test file in this repo's usual
-script style (`python run_tests.py patterns` runs all eight, ~110 cases).
+script style (`python run_tests.py patterns` runs all eleven, ~140 cases).
 
 ## How to actually practice with these
 
