@@ -77,6 +77,29 @@ Brute-force solution using Heap's algorithm to generate all permutations. Checks
 Recursive backtracking solution. Checks whether any subset of the input sums to a target value.
 - `subset_sum(nums, target) -> bool`
 
+## Interview Patterns
+
+Everything above builds structures from scratch; [patterns/](patterns/) trains
+the complementary skill — **recognizing which pattern a problem is asking
+for** — with 14 classic problems solved in canonical form, plus a
+signal-to-pattern table and a suggested practice loop.
+
+### [Heap / Priority Queue](patterns/heap/)
+"The k largest / most frequent / closest" — a size-k heap beats a full sort.
+- `kth_largest`, `top_k_frequent`, `k_closest_points`
+
+### [Sliding Window](patterns/sliding_window/)
+Longest/shortest *contiguous* run — one O(n) pass with a moving window.
+- `max_sum_window`, `longest_unique_substring`, `longest_ones_with_flips`
+
+### [Two Pointers](patterns/two_pointers/)
+Pairs in sorted input, both-ends comparison, in-place rewrites.
+- `pair_sum_sorted`, `most_water`, `is_palindrome_alnum`, `three_sum`
+
+### [Dynamic Programming](patterns/dynamic_programming/)
+"Number of ways / min cost / longest common" — state, recurrence, base case, order.
+- `climbing_stairs`, `house_robber`, `coin_change`, `longest_common_subsequence`
+
 ## Running Tests
 
 These tests use a small **script-style harness** — each `test_*.py` runs on

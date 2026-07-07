@@ -10,7 +10,7 @@ runnable. Anyone is welcome to clone it, work through it at their own pace, and 
 | Folder | What's in it |
 |---|---|
 | [backends/](backends/) | FastAPI projects and concept-focused learning modules |
-| [d-structs-algos/](d-structs-algos/) | Data structures, sorting algorithms, searching, and P vs NP problems |
+| [d-structs-algos/](d-structs-algos/) | Data structures, sorting, searching, P vs NP, and interview patterns (heap, sliding window, two pointers, DP) |
 | [frontends/](frontends/) | React + Vite frontends that pair with backend projects |
 | [utility_examples/](utility_examples/) | Standalone scripts: argparse, asyncio, ETL pipeline |
 | [experiments/](experiments/) | One-off scripts and throwaway experiments |
