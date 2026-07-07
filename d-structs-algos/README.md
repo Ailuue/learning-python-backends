@@ -81,7 +81,7 @@ Recursive backtracking solution. Checks whether any subset of the input sums to 
 
 Everything above builds structures from scratch; [patterns/](patterns/) trains
 the complementary skill — **recognizing which pattern a problem is asking
-for** — with 14 classic problems solved in canonical form, plus a
+for** — with 30 classic problems across eight families, plus a
 signal-to-pattern table and a suggested practice loop.
 
 ### [Heap / Priority Queue](patterns/heap/)
@@ -99,6 +99,22 @@ Pairs in sorted input, both-ends comparison, in-place rewrites.
 ### [Dynamic Programming](patterns/dynamic_programming/)
 "Number of ways / min cost / longest common" — state, recurrence, base case, order.
 - `climbing_stairs`, `house_robber`, `coin_change`, `longest_common_subsequence`
+
+### [Backtracking](patterns/backtracking/)
+Enumerate all combinations/arrangements — choose, recurse, un-choose, prune.
+- `subsets`, `permutations`, `combination_sum`, `word_search`
+
+### [Grid BFS / DFS](patterns/grid/)
+A matrix is a graph: connected regions (DFS) and fewest-steps (BFS).
+- `num_islands`, `flood_fill`, `rotting_oranges`, `shortest_path_binary`
+
+### [Intervals](patterns/intervals/)
+`[start, end]` pairs — sort first, then merge/schedule; sweep line for peak load.
+- `merge_intervals`, `insert_interval`, `can_attend_all`, `min_meeting_rooms`
+
+### [Binary Search on the Answer](patterns/binary_search_answer/)
+Rotated arrays, and searching a *range of answers* with a monotonic check.
+- `search_rotated`, `find_min_rotated`, `min_eating_speed`, `ship_within_days`
 
 ## Running Tests
 

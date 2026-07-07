@@ -12,10 +12,14 @@ and reaching for the matching tool.
 | "longest/shortest **contiguous** substring or subarray that..." | a **sliding window** | [sliding_window/](sliding_window/) |
 | "pair/triple in a **sorted** array", "compare from both ends" | **two pointers** | [two_pointers/](two_pointers/) |
 | "number of ways to...", "minimum cost to reach...", "longest common..." | **dynamic programming** | [dynamic_programming/](dynamic_programming/) |
+| "all subsets / permutations / combinations", "every way to..." | **backtracking** | [backtracking/](backtracking/) |
+| a **matrix** + "connected regions / reachable / fewest steps" | **grid BFS/DFS** | [grid/](grid/) |
+| a list of **`[start, end]`** pairs + "overlap / merge / schedule" | **intervals** (sort first) | [intervals/](intervals/) |
+| "rotated sorted array", "min/max X such that a condition holds" | **binary search on the answer** | [binary_search_answer/](binary_search_answer/) |
 
 Each folder has a README explaining the pattern, one module of classic problems
 solved in the pattern's canonical form, and a test file in this repo's usual
-script style (`python run_tests.py patterns` runs them all).
+script style (`python run_tests.py patterns` runs all eight, ~110 cases).
 
 ## How to actually practice with these
 
