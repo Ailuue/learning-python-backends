@@ -25,6 +25,7 @@ Run:
     pytest 02_mocking/test_02_mock_objects.py -v
 """
 
+from typing import Any, Protocol
 from unittest.mock import MagicMock, call
 
 
@@ -144,8 +145,15 @@ def test_auto_created_attributes():
 # 6. Chained calls — mock.method().attribute.other_method()
 # ---------------------------------------------------------------------------
 
-def get_user_email_domain(payment_service: PaymentService, charge_id: str) -> str:
-    # Hypothetical: payment_service.get_charge(id).customer.email
+# The real PaymentService has no get_charge — this is a hypothetical Stripe-like
+# API used to show chained mocking. A Protocol says "anything with this method"
+# so the annotation matches what the code actually calls.
+class SupportsGetCharge(Protocol):
+    def get_charge(self, charge_id: str) -> Any: ...
+
+
+def get_user_email_domain(payment_service: SupportsGetCharge, charge_id: str) -> str:
+    # payment_service.get_charge(id).customer.email
     email = payment_service.get_charge(charge_id).customer.email
     return email.split("@")[1]
 
