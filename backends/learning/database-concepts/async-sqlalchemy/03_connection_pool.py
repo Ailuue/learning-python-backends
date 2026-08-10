@@ -70,7 +70,7 @@ async def demo_pool_lifecycle() -> None:
 
     # Open 3 sessions (fills pool_size)
     tasks = [
-        asyncio.create_task(hold_connection(factory, hold_seconds=1.0, label=f"sess-{i}"))
+        asyncio.create_task(hold_connection(factory, seconds=1.0, label=f"sess-{i}"))
         for i in range(3)
     ]
     await asyncio.sleep(0.1)   # give tasks time to acquire their connections
@@ -78,7 +78,7 @@ async def demo_pool_lifecycle() -> None:
 
     # Open 2 more (hits overflow)
     overflow_tasks = [
-        asyncio.create_task(hold_connection(factory, hold_seconds=0.5, label=f"overflow-{i}"))
+        asyncio.create_task(hold_connection(factory, seconds=0.5, label=f"overflow-{i}"))
         for i in range(2)
     ]
     await asyncio.sleep(0.1)
