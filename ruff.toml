@@ -1,0 +1,16 @@
+exclude = [
+    "venv",
+    ".venv",
+    ".history",
+    "**/*_pb2.py",
+    "**/*_pb2_grpc.py",
+]
+
+[lint.per-file-ignores]
+# load_dotenv() and sys.path setup have to run before the app imports that
+# read them, so imports below that point are deliberate.
+"**/conftest.py" = ["E402"]
+"**/seed.py" = ["E402"]
+
+# Alembic generates env.py with this shape.
+"**/alembic/env.py" = ["E402"]
