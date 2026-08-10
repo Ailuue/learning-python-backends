@@ -17,7 +17,7 @@ from contextlib import contextmanager
 
 import psycopg2
 import redis as redis_lib
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 logging.basicConfig(
@@ -145,7 +145,10 @@ def create_item(item: ItemCreate):
             "INSERT INTO items (name, description) VALUES (%s, %s) RETURNING id",
             (item.name, item.description),
         )
-        item_id = cur.fetchone()[0]
+        row = cur.fetchone()
+        if row is None:
+            raise HTTPException(status_code=500, detail="insert returned no id")
+        item_id = row[0]
         conn.commit()
 
     _redis.delete(ITEMS_CACHE_KEY)  # next GET /items will re-query the DB
