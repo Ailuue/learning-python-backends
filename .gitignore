@@ -14,6 +14,11 @@ dist/
 *.egg-info/
 *.egg
 
+# Generated protobuf / gRPC stubs — run grpc-concepts/generate_protos.sh
+*_pb2.py
+*_pb2.pyi
+*_pb2_grpc.py
+
 # Test / coverage / type-check caches
 .pytest_cache/
 .mypy_cache/
