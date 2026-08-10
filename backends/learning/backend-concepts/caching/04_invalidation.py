@@ -24,6 +24,7 @@ This script demonstrates all three and shows the trade-offs.
 """
 
 import time
+from decimal import Decimal
 
 import cache
 import db
@@ -57,7 +58,8 @@ def demo_ttl_based():
     # Simulate a DB update that bypasses the cache
     with db.get_session() as session:
         p = session.get(Product, keyboard.id)
-        p.price = "999.99"
+        assert p is not None
+        p.price = Decimal("999.99")
         session.commit()
     print("  DB updated (price → 999.99) — cache still has old price")
 
@@ -167,7 +169,9 @@ def demo_versioned_keys():
     print("\n  Running bulk price update (20% discount)...")
     with db.get_session() as session:
         for p in session.query(Product).all():
-            p.price = round(float(p.price) * 0.8, 2)
+            # Stay in Decimal — a float round-trip is exactly the binary-rounding
+            # error a Numeric(10, 2) column exists to avoid.
+            p.price = (p.price * Decimal("0.8")).quantize(Decimal("0.01"))
         session.commit()
 
     # Instead of finding and deleting individual keys, just bump the version.
