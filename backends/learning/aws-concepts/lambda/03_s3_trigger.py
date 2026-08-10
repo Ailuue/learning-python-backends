@@ -1,4 +1,8 @@
-import sys, os, io, zipfile, time
+import sys
+import os
+import io
+import zipfile
+import time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from helpers import client
 
