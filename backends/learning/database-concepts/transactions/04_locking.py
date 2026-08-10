@@ -45,11 +45,11 @@ def demo_toctou_problem() -> None:
 
         # Both transactions read stock — neither is locked
         cur_a.execute("SELECT stock FROM inventory WHERE product = 'Widget'")
-        stock_a = cur_a.fetchone()[0]
+        stock_a = db.scalar(cur_a)
         print(f"  Customer A reads stock = {stock_a}  → decides to purchase")
 
         cur_b.execute("SELECT stock FROM inventory WHERE product = 'Widget'")
-        stock_b = cur_b.fetchone()[0]
+        stock_b = db.scalar(cur_b)
         print(f"  Customer B reads stock = {stock_b}  → also decides to purchase")
 
         print()
@@ -85,7 +85,7 @@ def demo_select_for_update() -> None:
         cur_a.execute(
             "SELECT stock FROM inventory WHERE product = 'Widget' FOR UPDATE"
         )
-        stock_a = cur_a.fetchone()[0]
+        stock_a = db.scalar(cur_a)
         print(f"  Customer A reads stock = {stock_a}  (row is now locked)")
 
         # A decrements and commits — releasing the lock
@@ -99,7 +99,7 @@ def demo_select_for_update() -> None:
         cur_b.execute(
             "SELECT stock FROM inventory WHERE product = 'Widget' FOR UPDATE"
         )
-        stock_b = cur_b.fetchone()[0]
+        stock_b = db.scalar(cur_b)
         print(f"  Customer B reads stock = {stock_b}  (after A's commit)")
 
         if stock_b > 0:
@@ -149,7 +149,7 @@ def demo_skip_locked() -> None:
             FOR UPDATE SKIP LOCKED
             LIMIT 1
         """)
-        job_a = cur_a.fetchone()
+        job_a = db.one(cur_a)
         cur_a.execute(
             "UPDATE jobs SET status = 'processing' WHERE id = %s", (job_a[0],)
         )
@@ -164,7 +164,7 @@ def demo_skip_locked() -> None:
             FOR UPDATE SKIP LOCKED
             LIMIT 1
         """)
-        job_b = cur_b.fetchone()
+        job_b = db.one(cur_b)
         cur_b.execute(
             "UPDATE jobs SET status = 'processing' WHERE id = %s", (job_b[0],)
         )

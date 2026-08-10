@@ -113,6 +113,26 @@ def reset_jobs() -> None:
         """)
 
 
+def one(cur) -> tuple:
+    """
+    The next row, or an error if the query returned none.
+
+    psycopg2 types fetchone() as Optional because a SELECT can match nothing.
+    Queries that must return a row (aggregates, RETURNING clauses, lookups by
+    primary key) should say so rather than let None reach the caller and fail
+    later as a confusing "NoneType is not subscriptable".
+    """
+    row = cur.fetchone()
+    if row is None:
+        raise LookupError(f"expected a row, got none: {cur.query!r}")
+    return row
+
+
+def scalar(cur):
+    """First column of the next row. See one()."""
+    return one(cur)[0]
+
+
 def print_table(cur, query: str, headers: list[str], params=None) -> None:
     cur.execute(query, params)
     rows = cur.fetchall()

@@ -59,7 +59,7 @@ def demo_non_repeatable_read() -> None:
         cur_a.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
-        balance_first = cur_a.fetchone()[0]
+        balance_first = db.scalar(cur_a)
         print(f"  Tx A reads Alice's balance:        ${balance_first}")
 
         cur_b.execute("UPDATE accounts SET balance = balance - 300 WHERE owner = 'Alice'")
@@ -67,7 +67,7 @@ def demo_non_repeatable_read() -> None:
         print("  Tx B updates Alice: -$300 and COMMITS")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
-        balance_second = cur_a.fetchone()[0]
+        balance_second = db.scalar(cur_a)
         print(f"  Tx A reads Alice's balance again:  ${balance_second}  ← DIFFERENT\n")
 
         conn_a.commit()
@@ -97,7 +97,7 @@ def demo_repeatable_read_prevents_it() -> None:
         cur_a.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
-        balance_first = cur_a.fetchone()[0]
+        balance_first = db.scalar(cur_a)
         print(f"  Tx A reads Alice's balance:        ${balance_first}")
 
         cur_b.execute("UPDATE accounts SET balance = balance - 300 WHERE owner = 'Alice'")
@@ -105,7 +105,7 @@ def demo_repeatable_read_prevents_it() -> None:
         print("  Tx B updates Alice: -$300 and COMMITS")
 
         cur_a.execute("SELECT balance FROM accounts WHERE owner = 'Alice'")
-        balance_second = cur_a.fetchone()[0]
+        balance_second = db.scalar(cur_a)
         print(f"  Tx A reads Alice's balance again:  ${balance_second}  ← SAME\n")
 
         conn_a.commit()
@@ -140,11 +140,11 @@ def demo_write_skew() -> None:
 
         # Both transactions check the on-call count from their own snapshot
         cur_a.execute("SELECT COUNT(*) FROM doctors WHERE on_call = TRUE")
-        count_a = cur_a.fetchone()[0]
+        count_a = db.scalar(cur_a)
         print(f"  Tx A (Alice) sees {count_a} doctors on-call — safe to go off-call")
 
         cur_b.execute("SELECT COUNT(*) FROM doctors WHERE on_call = TRUE")
-        count_b = cur_b.fetchone()[0]
+        count_b = db.scalar(cur_b)
         print(f"  Tx B (Bob)   sees {count_b} doctors on-call — safe to go off-call")
 
         # Both write based on their (now stale) decision
@@ -189,11 +189,11 @@ def demo_serializable_prevents_write_skew() -> None:
         cur_b.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
 
         cur_a.execute("SELECT COUNT(*) FROM doctors WHERE on_call = TRUE")
-        count_a = cur_a.fetchone()[0]
+        count_a = db.scalar(cur_a)
         print(f"  Tx A (Alice) sees {count_a} doctors on-call — tries to go off-call")
 
         cur_b.execute("SELECT COUNT(*) FROM doctors WHERE on_call = TRUE")
-        count_b = cur_b.fetchone()[0]
+        count_b = db.scalar(cur_b)
         print(f"  Tx B (Bob)   sees {count_b} doctors on-call — tries to go off-call")
 
         cur_a.execute("UPDATE doctors SET on_call = FALSE WHERE name = 'Alice'")
