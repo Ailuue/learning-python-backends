@@ -57,7 +57,7 @@ def demo_tsvector_anatomy() -> None:
             "SELECT to_tsvector('english', "
             "'The foxes are quickly running over lazy dogs')"
         )
-        print(f"tsvector: {cur.fetchone()[0]}\n")
+        print(f"tsvector: {db.scalar(cur)}\n")
 
         print(
             "Observations:\n"
@@ -74,7 +74,7 @@ def demo_tsvector_anatomy() -> None:
             "SELECT to_tsvector('english', "
             "'databases are indexed by the database engine')"
         )
-        print(f"tsvector: {cur.fetchone()[0]}\n")
+        print(f"tsvector: {db.scalar(cur)}\n")
         print(
             "  • 'databases' and 'database' both normalise to 'databas'\n"
             "  • A search for 'database' matches both words in a document\n"
@@ -96,7 +96,7 @@ def demo_stop_words() -> None:
     with db.cursor() as cur:
         for phrase in phrases:
             cur.execute("SELECT to_tsvector('english', %s)", (phrase,))
-            vec = cur.fetchone()[0]
+            vec = db.scalar(cur)
             print(f"  Input:   '{phrase}'")
             print(f"  Lexemes: {vec or '(empty — all stop words)'}\n")
 
@@ -122,7 +122,7 @@ def demo_query_functions() -> None:
         ]
         for label, expr in examples:
             cur.execute(f"SELECT {expr}")
-            print(f"  {label}:\n    {cur.fetchone()[0]}\n")
+            print(f"  {label}:\n    {db.scalar(cur)}\n")
 
     print(
         "  <->  means 'immediately followed by' (phrase / adjacency operator)\n"
@@ -151,7 +151,7 @@ def demo_match_operator() -> None:
                 "SELECT to_tsvector('english', %s) @@ plainto_tsquery('english', %s)",
                 (doc, query),
             )
-            match = "✓" if cur.fetchone()[0] else "✗"
+            match = "✓" if db.scalar(cur) else "✗"
             print(f"  {doc[:50]:<52}  {query:<20}  {match}")
         print()
         print(

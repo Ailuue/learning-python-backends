@@ -120,7 +120,7 @@ def demo_trigger() -> None:
             RETURNING id, title, search_vector
             """
         )
-        id_, title, vec = cur.fetchone()
+        id_, title, vec = db.one(cur)
         print(f"  id={id_}  title='{title}'")
         print(f"  search_vector set by trigger: {str(vec)[:100]}…\n")
 
@@ -134,7 +134,7 @@ def demo_trigger() -> None:
             """,
             (id_,),
         )
-        new_title, new_vec = cur.fetchone()
+        new_title, new_vec = db.one(cur)
         print(f"  New title: '{new_title}'")
         print(f"  New vector: {str(new_vec)[:100]}…\n")
 
