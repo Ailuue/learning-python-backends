@@ -49,6 +49,7 @@ def process_without_savepoints() -> None:
     cur = conn.cursor()
 
     success_count = 0
+    i = 0  # referenced by the handler below, which can fire before the loop runs
     try:
         for i, (sender, receiver, amount) in enumerate(TRANSFERS, 1):
             cur.execute(
