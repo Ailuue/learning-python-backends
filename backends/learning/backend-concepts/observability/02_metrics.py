@@ -96,13 +96,14 @@ async def metrics_middleware(request: Request, call_next):
     ACTIVE_REQUESTS.inc()
     start = time.perf_counter()
 
+    # Bound before the try so `finally` is safe even when an exception — including
+    # a BaseException like asyncio.CancelledError on client disconnect — means
+    # the assignment below never runs. An unhandled request is a 500.
+    status = "500"
+
     try:
         response: Response = await call_next(request)
         status = str(response.status_code)
-    except Exception:
-        status = "500"
-        ERROR_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
-        raise
     finally:
         duration = time.perf_counter() - start
         ACTIVE_REQUESTS.dec()
@@ -110,6 +111,8 @@ async def metrics_middleware(request: Request, call_next):
         REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
         REQUEST_DURATION.labels(method=method, endpoint=endpoint).observe(duration)
 
+        # `finally` is the single place errors are counted — counting them in an
+        # `except` branch as well would double-count every unhandled exception.
         if status.startswith(("4", "5")) and status != "404":
             ERROR_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
 
