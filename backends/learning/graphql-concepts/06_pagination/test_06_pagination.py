@@ -26,6 +26,7 @@ def test_offset_first_page_returns_correct_items():
         { postsPage(offset: 0, limit: 5) { items { id title } total hasNextPage hasPrevPage } }
     """)
     assert result.errors is None
+    assert result.data is not None
     page = result.data["postsPage"]
     assert len(page["items"]) == 5
     assert page["items"][0]["id"] == "1"
@@ -39,6 +40,7 @@ def test_offset_second_page_has_prev_page():
         "{ postsPage(offset: 5, limit: 5) { items { id } hasPrevPage } }"
     )
     assert result.errors is None
+    assert result.data is not None
     page = result.data["postsPage"]
     assert page["items"][0]["id"] == "6"
     assert page["hasPrevPage"] is True
@@ -49,6 +51,7 @@ def test_offset_last_page_has_no_next():
         "{ postsPage(offset: 95, limit: 10) { items { id } hasNextPage } }"
     )
     assert result.errors is None
+    assert result.data is not None
     page = result.data["postsPage"]
     assert len(page["items"]) == 5   # only 5 left
     assert page["hasNextPage"] is False
@@ -57,6 +60,7 @@ def test_offset_last_page_has_no_next():
 def test_offset_default_limit_is_ten():
     result = s.schema.execute_sync("{ postsPage { items { id } } }")
     assert result.errors is None
+    assert result.data is not None
     assert len(result.data["postsPage"]["items"]) == 10
 
 
@@ -73,6 +77,7 @@ def test_cursor_first_page_returns_correct_items():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     conn = result.data["postsConnection"]
     assert len(conn["edges"]) == 5
     assert conn["edges"][0]["node"]["id"] == "1"
@@ -87,6 +92,7 @@ def test_cursor_second_page_starts_after_end_cursor():
     result1 = s.schema.execute_sync(
         "{ postsConnection(first: 5) { pageInfo { endCursor } } }"
     )
+    assert result1.data is not None
     end_cursor = result1.data["postsConnection"]["pageInfo"]["endCursor"]
 
     # Get second page using the cursor
@@ -94,6 +100,7 @@ def test_cursor_second_page_starts_after_end_cursor():
         f'{{ postsConnection(first: 5, after: "{end_cursor}") {{ edges {{ node {{ id }} }} }} }}'
     )
     assert result2.errors is None
+    assert result2.data is not None
     edges = result2.data["postsConnection"]["edges"]
     assert len(edges) == 5
     assert edges[0]["node"]["id"] == "6"   # starts right after post 5
@@ -104,6 +111,7 @@ def test_cursor_last_page_has_no_next():
     result = s.schema.execute_sync(
         "{ postsConnection(first: 10) { pageInfo { hasNextPage endCursor } } }"
     )
+    assert result.data is not None
     page = result.data["postsConnection"]["pageInfo"]
     cursor = page["endCursor"]
 
@@ -112,6 +120,7 @@ def test_cursor_last_page_has_no_next():
         r = s.schema.execute_sync(
             f'{{ postsConnection(first: 10, after: "{cursor}") {{ pageInfo {{ hasNextPage endCursor }} }} }}'
         )
+        assert r.data is not None
         page = r.data["postsConnection"]["pageInfo"]
         if not page["hasNextPage"]:
             break
@@ -126,6 +135,7 @@ def test_cursor_is_opaque_base64():
     result = s.schema.execute_sync(
         "{ postsConnection(first: 1) { edges { cursor node { id } } } }"
     )
+    assert result.data is not None
     edge = result.data["postsConnection"]["edges"][0]
     cursor = edge["cursor"]
     post_id = edge["node"]["id"]
@@ -140,7 +150,9 @@ def test_cursor_vs_offset_item_count():
     offset_result = s.schema.execute_sync("{ postsPage { total } }")
     cursor_result = s.schema.execute_sync("{ postsConnection { totalCount } }")
     assert offset_result.errors is None
+    assert offset_result.data is not None
     assert cursor_result.errors is None
+    assert cursor_result.data is not None
     assert (
         offset_result.data["postsPage"]["total"]
         == cursor_result.data["postsConnection"]["totalCount"]

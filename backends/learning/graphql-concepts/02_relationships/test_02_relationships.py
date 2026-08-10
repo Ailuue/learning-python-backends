@@ -27,12 +27,14 @@ def reset_data():
 def test_posts_returns_all_six():
     result = s.schema.execute_sync("{ posts { id title } }")
     assert result.errors is None
+    assert result.data is not None
     assert len(result.data["posts"]) == 6
 
 
 def test_post_has_author_name():
     result = s.schema.execute_sync('{ post(id: "p1") { title author { name } } }')
     assert result.errors is None
+    assert result.data is not None
     assert result.data["post"]["title"] == "Intro to CRDT"
     assert result.data["post"]["author"]["name"] == "Alice Nguyen"
 
@@ -40,6 +42,7 @@ def test_post_has_author_name():
 def test_author_has_posts():
     result = s.schema.execute_sync('{ author(id: "a2") { name posts { title } } }')
     assert result.errors is None
+    assert result.data is not None
     assert result.data["author"]["name"] == "Bob Okafor"
     assert len(result.data["author"]["posts"]) == 2
 
@@ -57,6 +60,7 @@ def test_posts_without_author_costs_zero_extra_queries():
     """No author field requested → no get_author calls."""
     result = s.schema.execute_sync("{ posts { title } }")
     assert result.errors is None
+    assert result.data is not None
     # posts list fetch doesn't go through QueryCounter in our in-memory
     # setup, but no author lookups should happen
     assert db.QueryCounter.calls == 0
@@ -70,6 +74,7 @@ def test_n_plus_one_is_visible_when_requesting_author():
     db.QueryCounter.reset()
     result = s.schema.execute_sync("{ posts { title author { name } } }")
     assert result.errors is None
+    assert result.data is not None
     assert len(result.data["posts"]) == 6
     # N+1: 6 individual get_author calls (duplicates included)
     assert db.QueryCounter.calls == 6

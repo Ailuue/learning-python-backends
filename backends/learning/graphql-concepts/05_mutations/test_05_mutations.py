@@ -30,6 +30,7 @@ def test_create_todo_simple_returns_new_item():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     todo = result.data["createTodoSimple"]
     assert todo["id"] == "5"
     assert todo["title"] == "New task"
@@ -40,12 +41,14 @@ def test_create_todo_simple_returns_new_item():
 def test_toggle_done_simple_flips_status():
     result = s.schema.execute_sync('mutation { toggleDoneSimple(id: "3") { id done } }')
     assert result.errors is None
+    assert result.data is not None
     assert result.data["toggleDoneSimple"]["done"] is True
 
 
 def test_toggle_done_simple_missing_id_returns_null():
     result = s.schema.execute_sync('mutation { toggleDoneSimple(id: "999") { id } }')
     assert result.errors is None
+    assert result.data is not None
     assert result.data["toggleDoneSimple"] is None
 
 
@@ -61,6 +64,7 @@ def test_create_todo_success_path():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert "todo" in result.data["createTodo"]
     assert result.data["createTodo"]["todo"]["title"] == "Practice pagination"
 
@@ -75,6 +79,7 @@ def test_create_todo_empty_title_returns_validation_error():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert "field" in result.data["createTodo"]
     assert result.data["createTodo"]["field"] == "title"
 
@@ -88,6 +93,7 @@ def test_create_todo_invalid_priority_returns_validation_error():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert result.data["createTodo"]["field"] == "priority"
 
 
@@ -100,6 +106,7 @@ def test_update_todo_partial_update_only_changes_provided_fields():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     todo = result.data["updateTodo"]["todo"]
     assert todo["done"] is True
     assert todo["title"] == "Implement DataLoaders"   # unchanged
@@ -116,6 +123,7 @@ def test_update_todo_missing_id_returns_not_found():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert "message" in result.data["updateTodo"]
     assert result.data["updateTodo"]["id"] == "999"
 
@@ -130,6 +138,7 @@ def test_delete_todo_returns_deleted_item():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert result.data["deleteTodo"]["title"] == "Learn GraphQL schema basics"
     assert len(db.items) == 3
 
@@ -144,6 +153,7 @@ def test_delete_todo_missing_id_returns_not_found():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert "message" in result.data["deleteTodo"]
 
 
@@ -160,6 +170,7 @@ def test_two_mutations_run_in_sequence():
         }
     """)
     assert result.errors is None
+    assert result.data is not None
     assert result.data["first"]["todo"]["id"] == "5"
     assert result.data["second"]["todo"]["id"] == "6"
 
@@ -171,4 +182,5 @@ def test_mutation_and_query_reflect_change():
         }}
     """)
     result = s.schema.execute_sync('{ todo(id: "3") { done } }')
+    assert result.data is not None
     assert result.data["todo"]["done"] is True

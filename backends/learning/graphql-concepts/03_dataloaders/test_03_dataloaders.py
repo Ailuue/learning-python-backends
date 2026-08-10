@@ -35,6 +35,7 @@ async def test_posts_with_authors_returns_correct_data():
         context_value=fresh_context(),
     )
     assert result.errors is None
+    assert result.data is not None
     posts = result.data["posts"]
     assert len(posts) == 6
     assert posts[0]["author"]["name"] == "Alice Nguyen"
@@ -47,6 +48,7 @@ async def test_single_post_author_resolved_correctly():
         context_value=fresh_context(),
     )
     assert result.errors is None
+    assert result.data is not None
     assert result.data["post"]["author"]["name"] == "Bob Okafor"
 
 
