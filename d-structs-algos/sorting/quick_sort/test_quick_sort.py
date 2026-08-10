@@ -17,7 +17,7 @@ submit_cases = run_cases + [
 
 def test(input1: list, input2: int, input3: int, expected_output: list) -> bool:
     print("---------------------------------")
-    print(f"Inputs:")
+    print("Inputs:")
     print(f" * nums: {input1}")
     print(f" * low: {input2}")
     print(f" * high: {input3}")

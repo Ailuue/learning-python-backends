@@ -17,7 +17,7 @@ submit_cases = run_cases + [
 
 def test(target: int, arr: list, expected_output: bool) -> bool:
     print("---------------------------------")
-    print(f"Inputs:")
+    print("Inputs:")
     print(f" * target: {target}")
     print(f" * arr length: {len(arr)} items")
     print(f"Expected:  {expected_output} & completed in less than 50 milliseconds")
