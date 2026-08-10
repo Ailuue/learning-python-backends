@@ -47,8 +47,10 @@ def demo_row_multiplication() -> None:
         )
     ).scalar()
 
-    author_count = session.scalar(select(func.count()).select_from(db.Author))
-    book_count   = session.scalar(select(func.count()).select_from(db.Book))
+    # scalar() is typed Optional — COUNT always returns a row, but coerce so the
+    # arithmetic below is safe even against an empty result set.
+    author_count = session.scalar(select(func.count()).select_from(db.Author)) or 0
+    book_count   = session.scalar(select(func.count()).select_from(db.Book)) or 0
 
     print(f"  Authors in database: {author_count}")
     print(f"  Books in database:   {book_count}")
