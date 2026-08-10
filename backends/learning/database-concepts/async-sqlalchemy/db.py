@@ -34,6 +34,7 @@ def make_engine(
     max_overflow: int = 10,
     pool_timeout: float = 30.0,
     pool_pre_ping: bool = True,
+    pool_recycle: int = -1,
     echo: bool = False,
 ) -> AsyncEngine:
     """
@@ -43,6 +44,7 @@ def make_engine(
     max_overflow  — extra connections allowed above pool_size (temporary)
     pool_timeout  — seconds to wait for a free connection before raising
     pool_pre_ping — send SELECT 1 before using a connection to detect stale ones
+    pool_recycle  — discard connections older than this many seconds (-1 = never)
     """
     return create_async_engine(
         os.getenv(
@@ -53,6 +55,7 @@ def make_engine(
         max_overflow=max_overflow,
         pool_timeout=pool_timeout,
         pool_pre_ping=pool_pre_ping,
+        pool_recycle=pool_recycle,
         echo=echo,
     )
 
