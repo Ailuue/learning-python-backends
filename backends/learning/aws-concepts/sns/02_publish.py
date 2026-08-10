@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from helpers import client
 
@@ -44,7 +45,7 @@ resp = sns.publish(
 print(f"Published order event: {resp['MessageId']}")
 
 # --- Read from the SQS queue to see what arrived ---
-import time; time.sleep(1)
+time.sleep(1)  # give SNS a moment to fan out to the queue
 print("\n=== Messages received in SQS ===")
 messages = sqs.receive_message(QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=2).get("Messages", [])
 for msg in messages:
