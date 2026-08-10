@@ -117,6 +117,10 @@ async def observability_middleware(request: Request, call_next):
     ACTIVE_REQUESTS.inc()
     start = time.perf_counter()
 
+    # Bound before the try: `finally` always runs, including when a BaseException
+    # (asyncio.CancelledError on client disconnect) skips both branches below.
+    status = 500
+
     try:
         response: Response = await call_next(request)
         status = response.status_code
