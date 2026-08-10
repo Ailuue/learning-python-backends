@@ -32,10 +32,31 @@ mypy was enforcing something.
 layout produces colliding module names (12 `main.py`, 12 `conftest.py`, 8
 `db.py`). `--explicit-package-bases` does not help; the duplicates share a base.
 
-**Next time:** don't assume a config file at the root means the tool runs. The
-open decision is whether to scope mypy per project directory or drop it and
-standardise on pyright, which handles this layout natively and is what Pylance
-uses in the editor anyway.
+**Next time:** don't assume a config file at the root means the tool runs.
+
+**Resolved:** `mypy.ini` is gone (`5fced02`). Before removing it I measured what
+it was actually asking for — turning on pyright's nearest equivalent,
+`reportMissingParameterType`, produces **517 warnings** against the current
+tree, nearly all of them demo functions that are deliberately untyped. So
+`disallow_untyped_defs = true` was never a rule this repo followed; it was a
+rule that never ran. One checker (pyright, which is what Pylance uses anyway)
+beats two that disagree.
+
+## 2026-08-10 — Generating protobuf stubs made Pylance *worse*, not better
+
+**Expected:** running `grpc-concepts/generate_protos.sh` would clear the 12
+unresolved `greeter_pb2` / `stock_pb2` imports.
+
+**What happened:** it cleared those 12 and introduced ~70 new ones —
+`"HelloReply" is not a known attribute of module "greeter_pb2"`. The generated
+`*_pb2.py` doesn't declare its message classes; it builds them at runtime
+through `_builder.BuildTopDescriptorsAndMessages`, so there is nothing for a
+static checker to see.
+
+**Next time:** always pass `--pyi_out` alongside `--python_out`. The `.pyi`
+stubs are what make generated protobuf code legible to Pylance, and protoc will
+not emit them unless asked. Fixed in `07daf6a`; the generated files are now
+gitignored and excluded from pyright, since they are build output.
 
 ## 2026-08-10 — A metrics bug that only a counter delta could prove
 
