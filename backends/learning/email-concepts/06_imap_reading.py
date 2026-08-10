@@ -38,7 +38,7 @@ import email
 import imaplib
 import smtplib
 import time
-from email.message import EmailMessage
+from email.message import EmailMessage, Message
 
 
 SMTP_HOST  = "localhost"
@@ -67,22 +67,49 @@ def send_test_email(to: str, subject: str, body: str, html: str = ""):
         smtp.send_message(msg)
 
 
-def parse_message(raw: bytes) -> email.message.Message:
+def as_bytes(part) -> bytes:
+    """
+    Pull the payload bytes out of an imaplib response item.
+
+    imaplib is loosely typed on purpose: an item is bytes for a simple reply,
+    a (header, literal) tuple for a FETCH, or None for a padding entry. Every
+    caller here wants the bytes, so do the unwrapping once.
+    """
+    if isinstance(part, tuple):
+        return part[1]
+    if isinstance(part, bytes):
+        return part
+    raise TypeError(f"unexpected IMAP response part: {part!r}")
+
+
+def parse_message(raw: bytes) -> Message:
     return email.message_from_bytes(raw)
 
 
-def get_body(msg: email.message.Message) -> dict:
+def payload_text(part: Message) -> str:
+    """
+    Decoded text of one message part.
+
+    get_payload(decode=True) hands back bytes for a leaf part but None when the
+    part has no body of its own — a multipart container, for instance. Calling
+    .decode() on that None is an AttributeError, so check first.
+    """
+    raw = part.get_payload(decode=True)
+    return raw.decode(errors="replace") if isinstance(raw, bytes) else ""
+
+
+def get_body(msg: Message) -> dict:
     """Extract plain-text and HTML body from a parsed message."""
     plain, html = "", ""
     if msg.is_multipart():
         for part in msg.walk():
             ct = part.get_content_type()
             if ct == "text/plain" and not plain:
-                plain = part.get_payload(decode=True).decode(errors="replace")
+                plain = payload_text(part)
             elif ct == "text/html" and not html:
-                html = part.get_payload(decode=True).decode(errors="replace")
+                html = payload_text(part)
     else:
-        plain = msg.get_payload(decode=True).decode(errors="replace")
+        plain = payload_text(msg)
     return {"plain": plain.strip(), "html": html.strip()}
 
 
@@ -117,22 +144,22 @@ def main():
     print("\n2. List mailboxes:")
     ok, mailboxes = mail.list()
     for mb in mailboxes:
-        print(f"   {mb.decode()}")
+        print(f"   {as_bytes(mb).decode()}")
 
     # ── Select INBOX and search ALL ───────────────────────────────────────
     print("\n3. Select INBOX, fetch all message IDs:")
     ok, data = mail.select("INBOX")
-    print(f"   Messages in INBOX: {data[0].decode()}")
+    print(f"   Messages in INBOX: {as_bytes(data[0]).decode()}")
 
     ok, msg_ids = mail.search(None, "ALL")
-    ids = msg_ids[0].split()   # list of b"1", b"2", ...
+    ids = as_bytes(msg_ids[0]).split()   # list of b"1", b"2", ...
     print(f"   IDs: {[i.decode() for i in ids]}")
 
     # ── Fetch and print each message ─────────────────────────────────────
     print("\n4. Fetch and parse each message:")
     for msg_id in ids:
-        ok, raw_data = mail.fetch(msg_id, "(RFC822)")
-        raw_bytes = raw_data[0][1]
+        ok, raw_data = mail.fetch(msg_id.decode(), "(RFC822)")
+        raw_bytes = as_bytes(raw_data[0])
         msg = parse_message(raw_bytes)
         body = get_body(msg)
         print(f"\n   ID={msg_id.decode()}")
