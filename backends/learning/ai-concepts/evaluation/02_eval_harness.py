@@ -52,7 +52,10 @@ def classify(provider: str, text: str) -> str:
         max_tokens=16,
         messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": text}],
     )
-    return r.choices[0].message.content.strip().upper()
+    content = r.choices[0].message.content
+    if content is None:
+        raise RuntimeError("model returned no text content")
+    return content.strip().upper()
 
 
 def evaluate(provider: str) -> None:

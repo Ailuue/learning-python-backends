@@ -57,7 +57,8 @@ def call(provider: str, prompt: str) -> tuple[str, str]:
         if r.stop_reason == "refusal":
             return "", "refusal"
         text = "".join(b.text for b in r.content if b.type == "text")
-        return text, r.stop_reason  # "end_turn" normally, "max_tokens" if truncated
+        # stop_reason is Optional in the SDK; "unknown" keeps the contract str.
+        return text, r.stop_reason or "unknown"  # "end_turn", or "max_tokens" if truncated
 
     from openai import OpenAI
 
@@ -69,7 +70,9 @@ def call(provider: str, prompt: str) -> tuple[str, str]:
         messages=[{"role": "user", "content": prompt}],
     )
     choice = r.choices[0]
-    return choice.message.content, choice.finish_reason  # "stop" normally, "length" if truncated
+    # content is None on a content-filter stop — exactly the failure this file is
+    # about, so hand it back as empty text alongside the finish_reason that explains it.
+    return choice.message.content or "", choice.finish_reason  # "stop", or "length" if truncated
 
 
 def get_product(provider: str, max_attempts: int = 3) -> Product:

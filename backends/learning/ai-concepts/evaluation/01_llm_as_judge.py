@@ -54,6 +54,10 @@ def judge_anthropic(answer: str) -> Verdict:
         messages=[{"role": "user", "content": judge_prompt(answer)}],
         output_format=Verdict,
     )
+    # parsed_output is None when the model's reply does not validate against
+    # the schema — a real outcome worth surfacing, not an impossible one.
+    if r.parsed_output is None:
+        raise ValueError("judge output did not match the Verdict schema")
     return r.parsed_output
 
 
@@ -67,7 +71,10 @@ def judge_openai(answer: str) -> Verdict:
         messages=[{"role": "user", "content": judge_prompt(answer)}],
         response_format=Verdict,
     )
-    return r.choices[0].message.parsed
+    parsed = r.choices[0].message.parsed
+    if parsed is None:
+        raise ValueError("judge output did not match the Verdict schema")
+    return parsed
 
 
 def main() -> None:

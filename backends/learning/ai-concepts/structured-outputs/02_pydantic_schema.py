@@ -49,6 +49,10 @@ def parse_anthropic() -> SupportTicket:
         messages=[{"role": "user", "content": INSTRUCTION}],
         output_format=SupportTicket,
     )
+    # parsed_output is None when the model's reply does not validate against
+    # the schema — a real outcome worth surfacing, not an impossible one.
+    if r.parsed_output is None:
+        raise ValueError("model output did not match the SupportTicket schema")
     return r.parsed_output
 
 
@@ -62,7 +66,10 @@ def parse_openai() -> SupportTicket:
         messages=[{"role": "user", "content": INSTRUCTION}],
         response_format=SupportTicket,
     )
-    return r.choices[0].message.parsed
+    parsed = r.choices[0].message.parsed
+    if parsed is None:
+        raise ValueError("model output did not match the SupportTicket schema")
+    return parsed
 
 
 def main() -> None:

@@ -46,7 +46,10 @@ def get_text(provider: str) -> str:
         response_format={"type": "json_object"},
         messages=[{"role": "user", "content": PROMPT}],
     )
-    return r.choices[0].message.content
+    content = r.choices[0].message.content
+    if content is None:
+        raise RuntimeError("model returned no text content")
+    return content
 
 
 def strip_fences(text: str) -> str:
