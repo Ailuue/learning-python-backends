@@ -91,6 +91,9 @@ def parse_callback(callback_url: str, expected_state: str) -> str:
     received_state = params.get("state", [None])[0]
     code = params.get("code", [None])[0]
 
+    if code is None:
+        raise ValueError("Callback URL carried no ?code= parameter")
+
     if received_state != expected_state:
         raise ValueError(
             f"State mismatch — possible CSRF attack!\n"

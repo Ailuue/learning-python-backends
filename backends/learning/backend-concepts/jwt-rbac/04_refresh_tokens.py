@@ -163,6 +163,11 @@ def refresh(body: RefreshRequest):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Expected a refresh token")
 
     jti = payload.get("jti")
+    if not isinstance(jti, str):
+        # Rotation is keyed on jti — a refresh token without one can never be
+        # revoked, so reject it rather than treating the lookup miss as expiry.
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Refresh token has no jti claim")
+
     username = active_refresh_tokens.get(jti)
     if not username:
         # Token was already used or was revoked (e.g., by logout).
@@ -185,7 +190,9 @@ def refresh(body: RefreshRequest):
 def logout(body: RefreshRequest):
     try:
         payload = jwt.decode(body.refresh_token, SECRET, algorithms=[ALGORITHM])
-        active_refresh_tokens.pop(payload.get("jti"), None)
+        jti = payload.get("jti")
+        if isinstance(jti, str):
+            active_refresh_tokens.pop(jti, None)
     except jwt.InvalidTokenError:
         pass  # already invalid — treat as a successful logout
     return {"status": "logged out"}

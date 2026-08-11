@@ -130,6 +130,7 @@ class TestCreatePost:
         )
         assert resp.status_code == 201
         post = db.get(Post, resp.json()["id"])
+        assert post is not None
         assert post.user_id == alice.id
         assert post.user_id != bob.id
 
