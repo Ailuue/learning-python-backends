@@ -13,6 +13,7 @@ security story of tool use.
 import json
 import os
 import sys
+from typing import Any, cast
 
 from dotenv import load_dotenv
 
@@ -30,10 +31,11 @@ QUESTION = "What's the weather in Lisbon? Reply in one sentence."
 
 def run_anthropic() -> None:
     import anthropic
+    from anthropic.types import MessageParam, ToolParam, ToolResultBlockParam
 
     client = anthropic.Anthropic()
     model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8")
-    tools = [
+    tools: list[ToolParam] = [
         {
             "name": "get_weather",
             "description": "Get the current weather for a city.",
@@ -44,18 +46,18 @@ def run_anthropic() -> None:
             },
         }
     ]
-    messages = [{"role": "user", "content": QUESTION}]
+    messages: list[MessageParam] = [{"role": "user", "content": QUESTION}]
     r = client.messages.create(model=model, max_tokens=512, tools=tools, messages=messages)
     print("stop_reason:", r.stop_reason)  # -> "tool_use"
 
     # Echo the assistant's turn (including the tool_use block) back into history.
     messages.append({"role": "assistant", "content": r.content})
 
-    results = []
+    results: list[ToolResultBlockParam] = []
     for block in r.content:
         if block.type == "tool_use":
             print(f"  model wants: {block.name}({block.input})")
-            output = get_weather(**block.input)
+            output = get_weather(**cast(dict[str, Any], block.input))
             results.append(
                 {"type": "tool_result", "tool_use_id": block.id, "content": output}
             )
@@ -67,10 +69,11 @@ def run_anthropic() -> None:
 
 def run_openai() -> None:
     from openai import OpenAI
+    from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolUnionParam
 
     client = OpenAI()
     model = os.environ.get("OPENAI_MODEL", "gpt-4o")
-    tools = [
+    tools: list[ChatCompletionToolUnionParam] = [
         {
             "type": "function",
             "function": {
@@ -84,13 +87,17 @@ def run_openai() -> None:
             },
         }
     ]
-    messages = [{"role": "user", "content": QUESTION}]
+    messages: list[ChatCompletionMessageParam] = [{"role": "user", "content": QUESTION}]
     r = client.chat.completions.create(model=model, tools=tools, messages=messages)
     msg = r.choices[0].message
     print("finish_reason:", r.choices[0].finish_reason)  # -> "tool_calls"
 
-    messages.append(msg)  # the assistant message, carrying tool_calls
-    for tc in msg.tool_calls:
+    # The SDK accepts its own response model here, but the parameter is
+    # typed as a TypedDict — cast rather than reshape it.
+    messages.append(cast(ChatCompletionMessageParam, msg))  # the assistant message, carrying tool_calls
+    for tc in msg.tool_calls or []:
+        if tc.type != "function":
+            continue  # these demos only register function tools
         args = json.loads(tc.function.arguments)
         print(f"  model wants: {tc.function.name}({args})")
         output = get_weather(**args)

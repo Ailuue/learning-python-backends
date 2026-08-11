@@ -11,6 +11,7 @@ registry and the schema list, leave the loop alone.
 import json
 import os
 import sys
+from typing import Any, cast
 
 from dotenv import load_dotenv
 
@@ -59,11 +60,12 @@ QUESTION = "What's the weather in Tokyo, and how much is 50 USD in JPY?"
 
 def run_anthropic() -> None:
     import anthropic
+    from anthropic.types import MessageParam, ToolParam, ToolResultBlockParam
 
     client = anthropic.Anthropic()
     model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8")
-    tools = [{"name": s["name"], "description": s["description"], "input_schema": s["parameters"]} for s in SCHEMAS]
-    messages = [{"role": "user", "content": QUESTION}]
+    tools: list[ToolParam] = [{"name": s["name"], "description": s["description"], "input_schema": s["parameters"]} for s in SCHEMAS]
+    messages: list[MessageParam] = [{"role": "user", "content": QUESTION}]
 
     while True:
         r = client.messages.create(model=model, max_tokens=1024, tools=tools, messages=messages)
@@ -71,23 +73,28 @@ def run_anthropic() -> None:
             print("final:", "".join(b.text for b in r.content if b.type == "text"))
             return
         messages.append({"role": "assistant", "content": r.content})
-        results = []
+        results: list[ToolResultBlockParam] = []
         for block in r.content:
             if block.type == "tool_use":
                 print(f"  call: {block.name}({block.input})")
                 results.append(
-                    {"type": "tool_result", "tool_use_id": block.id, "content": TOOLS[block.name](**block.input)}
+                    {"type": "tool_result", "tool_use_id": block.id, "content": TOOLS[block.name](**cast(dict[str, Any], block.input))}
                 )
         messages.append({"role": "user", "content": results})
 
 
 def run_openai() -> None:
     from openai import OpenAI
+    from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolUnionParam
 
     client = OpenAI()
     model = os.environ.get("OPENAI_MODEL", "gpt-4o")
-    tools = [{"type": "function", "function": s} for s in SCHEMAS]
-    messages = [{"role": "user", "content": QUESTION}]
+    # SCHEMAS is a plain list of dicts, so the comprehension can't infer the
+    # per-variant TypedDict — assert the shape the wrapper is building.
+    tools = [
+        cast(ChatCompletionToolUnionParam, {"type": "function", "function": s}) for s in SCHEMAS
+    ]
+    messages: list[ChatCompletionMessageParam] = [{"role": "user", "content": QUESTION}]
 
     while True:
         r = client.chat.completions.create(model=model, tools=tools, messages=messages)
@@ -95,8 +102,12 @@ def run_openai() -> None:
         if not msg.tool_calls:
             print("final:", msg.content)
             return
-        messages.append(msg)
-        for tc in msg.tool_calls:
+        # The SDK accepts its own response model here, but the parameter is
+        # typed as a TypedDict — cast rather than reshape it.
+        messages.append(cast(ChatCompletionMessageParam, msg))
+        for tc in msg.tool_calls or []:
+            if tc.type != "function":
+                continue  # these demos only register function tools
             args = json.loads(tc.function.arguments)
             print(f"  call: {tc.function.name}({args})")
             messages.append(
