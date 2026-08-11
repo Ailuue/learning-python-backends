@@ -58,6 +58,23 @@ stubs are what make generated protobuf code legible to Pylance, and protoc will
 not emit them unless asked. Fixed in `07daf6a`; the generated files are now
 gitignored and excluded from pyright, since they are build output.
 
+## 2026-08-10 — Fixing an annotation can raise the error count, correctly
+
+**Expected:** replacing `email.message.Message` with the properly imported
+`Message` in `06_imap_reading.py` would clear two errors.
+
+**What happened:** it cleared two and produced three new ones. The old
+annotation resolved to Unknown, so pyright had been silently skipping every
+call on those parameters. With a real type in place it could finally see that
+`part.get_payload(decode=True).decode(...)` calls `.decode()` on something that
+can be `None` — a genuine `AttributeError` waiting for any message part with no
+body of its own.
+
+**Next time:** don't read a rising error count as a regression. Vague
+annotations suppress checking; sharpening one reveals what was always there.
+The right response is to fix what surfaced (`payload_text()` now checks before
+decoding), not to revert the annotation.
+
 ## 2026-08-10 — A metrics bug that only a counter delta could prove
 
 **Expected:** reading the middleware would be enough to confirm the
