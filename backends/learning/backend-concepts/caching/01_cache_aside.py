@@ -34,7 +34,7 @@ import db
 # Core functions
 # ---------------------------------------------------------------------------
 
-def get_product(session, product_id: int) -> dict:
+def get_product(session, product_id: int) -> dict | None:
     key = cache.product_key(product_id)
     raw = cache.get(key)
 

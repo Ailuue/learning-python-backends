@@ -118,6 +118,7 @@ def main():
     # Pre-populate cache so cache-side updates work
     with db.get_session() as session:
         hub = session.get(Product, hub.id)
+        assert hub is not None, "seeded product disappeared"
         cache.setex(cache.product_key(hub.id), cache.PRODUCT_TTL, cache.serialise(hub))
 
     # ------------------------------------------------------------------
@@ -129,6 +130,7 @@ def main():
     print("\n  DB right now (before flush):")
     with db.get_session() as session:
         current = session.get(Product, hub.id)
+        assert current is not None
         print(f"    DB stock = {current.stock}  (still 130 — writes are queued)")
 
     cache_val = cache.get(cache.product_key(hub.id))
@@ -144,6 +146,7 @@ def main():
     print("\n=== 3. Verify DB now matches cache ===")
     with db.get_session() as session:
         current = session.get(Product, hub.id)
+        assert current is not None
         print(f"\n    DB stock    = {current.stock}  (expected 125)")
     cache_val = cache.get(cache.product_key(hub.id))
     if cache_val:

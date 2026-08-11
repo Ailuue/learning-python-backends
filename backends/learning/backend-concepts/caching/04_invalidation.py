@@ -63,7 +63,9 @@ def demo_ttl_based():
         session.commit()
     print("  DB updated (price → 999.99) — cache still has old price")
 
-    cached = cache.deserialise(cache.get(key))
+    raw = cache.get(key)
+    assert raw is not None, "entry was cached moments ago and its TTL has not expired"
+    cached = cache.deserialise(raw)
     print(f"  Cache price: {cached['price']}  (stale!)")
 
     print(f"  Waiting {short_ttl}s for TTL expiry...")
@@ -107,7 +109,7 @@ def demo_event_driven():
         print(f"  DB updated + cache DEL {cache.product_key(product_id)!r}")
 
     with db.get_session() as session:
-        update_price_with_invalidation(session, hub.id, "39.99")
+        update_price_with_invalidation(session, hub.id, Decimal("39.99"))
 
     result = cache.get(key)
     print(f"  Cache after write: {result}  (MISS — immediately consistent)")

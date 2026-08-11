@@ -77,7 +77,7 @@ def update_product(session, product_id: int, **fields) -> db.Product:
     return product
 
 
-def get_product(session, product_id: int) -> dict:
+def get_product(session, product_id: int) -> dict | None:
     """Read — cache first, DB fallback (standard cache-aside read side)."""
     key = cache.product_key(product_id)
     raw = cache.get(key)
