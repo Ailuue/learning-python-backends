@@ -59,12 +59,20 @@ async def demo_expire_trap(product_id: int) -> None:
     product_ref = None
     async with unsafe_factory() as session:
         product_ref = await session.get(Product, product_id)
+        assert product_ref is not None, "seeded product disappeared"
         await session.commit()
-        # Attributes are now expired. Inside the session they can still be
-        # refreshed by the async machinery if you await the right call — but
-        # accessing them directly here works only by chance (the value is
-        # cached on the Python object until the event loop yields).
-        print(f"    Inside session after commit: id={product_ref.id}  name={product_ref.name!r}")
+        # Attributes are now expired. Touching one triggers a lazy reload, and a
+        # reload is IO — which the async engine cannot do from a plain attribute
+        # access. This raises even inside the session, which is the whole trap.
+        print("    Inside session, after commit, reading product_ref.id...")
+        try:
+            print(f"    id={product_ref.id}")
+        except MissingGreenlet:
+            print("    MissingGreenlet — the expired attribute needed IO to reload")
+
+        # await refresh() is the supported way to reload inside an async session.
+        await session.refresh(product_ref)
+        print(f"    After await session.refresh(): id={product_ref.id}  name={product_ref.name!r}")
 
     # Session is now CLOSED. Accessing any expired column raises MissingGreenlet.
     print("    Session closed. Accessing product_ref.name...")
@@ -90,6 +98,7 @@ async def demo_expire_safe(product_id: int) -> None:
     product_ref = None
     async with db.get_session() as session:   # uses expire_on_commit=False
         product_ref = await session.get(Product, product_id)
+        assert product_ref is not None, "seeded product disappeared"
         await session.commit()
 
     # Session is closed, but attributes are not expired.
@@ -109,6 +118,7 @@ async def demo_refresh(product_id: int) -> None:
 """)
     async with db.get_session() as session:
         product = await session.get(Product, product_id)
+        assert product is not None, "seeded product disappeared"
         print(f"    Before update: stock={product.stock}")
 
         # Simulate another process updating the stock directly in DB

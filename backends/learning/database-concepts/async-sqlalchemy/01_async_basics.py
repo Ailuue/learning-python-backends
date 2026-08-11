@@ -100,6 +100,7 @@ async def demo_update(product_id: int) -> None:
 """)
     async with db.get_session() as session:
         product = await session.get(Product, product_id)
+        assert product is not None, "seeded product disappeared"
         old_price = product.price
         product.price = Decimal("89.99")
         await session.commit()

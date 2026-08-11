@@ -52,6 +52,7 @@ async def fetch_product(product_id: int) -> dict:
     async with db.get_session() as session:
         await session.execute(text(f"SELECT pg_sleep({QUERY_LATENCY_S})"))
         product = await session.get(Product, product_id)
+        assert product is not None, "seeded product disappeared"
         return {"id": product.id, "name": product.name, "price": str(product.price)}
 
 

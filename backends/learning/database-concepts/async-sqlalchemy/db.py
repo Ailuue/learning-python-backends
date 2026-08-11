@@ -15,6 +15,7 @@ Key difference from the sync layer you've used before:
 import os
 from contextlib import asynccontextmanager
 from decimal import Decimal
+from typing import cast
 
 from dotenv import load_dotenv
 from sqlalchemy import Numeric, String
@@ -25,6 +26,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.pool import QueuePool
 
 load_dotenv()
 
@@ -109,7 +111,10 @@ async def seed(session: AsyncSession) -> list[Product]:
 
 
 def print_pool_status(eng: AsyncEngine, label: str = "Pool status") -> None:
-    pool = eng.sync_engine.pool
+    # engine.pool is typed as the abstract Pool, which has no size()/checkedin()/
+    # checkedout()/overflow() — those live on QueuePool, which is what an engine
+    # built by make_engine() actually uses.
+    pool = cast(QueuePool, eng.sync_engine.pool)
     print(f"\n  [{label}]")
     print(f"    pool_size (max persistent): {pool.size()}")
     print(f"    checked in  (idle):         {pool.checkedin()}")
