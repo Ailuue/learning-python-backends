@@ -41,6 +41,8 @@ def load_schema(section_dir: str):
     """Import schema.py from a numbered section directory."""
     path = ROOT / section_dir / "schema.py"
     spec = importlib.util.spec_from_file_location(f"{section_dir}.schema", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load a schema module from {path}")
     mod = importlib.util.module_from_spec(spec)
     # Each section needs its own sys.path entry for relative imports
     section_path = str(ROOT / section_dir)

@@ -7,7 +7,7 @@ The GraphQL type system beyond basic objects and scalars.
 
 import enum as _enum
 import strawberry
-from typing import Annotated, Optional, Union
+from typing import TYPE_CHECKING, Annotated, Optional, Union
 from datetime import date
 
 
@@ -39,13 +39,21 @@ class PublishStatus(_enum.Enum):
 # Note: Strawberry 0.220+ prefers StrawberryConfig.scalar_map for type safety.
 # The strawberry.scalar(type, ...) form still works and is clearer for learning.
 
-Date = strawberry.scalar(
-    date,
-    name="Date",
-    description="ISO 8601 date string (YYYY-MM-DD)",
-    serialize=lambda v: v.isoformat(),
-    parse_value=lambda v: date.fromisoformat(v),
-)
+# strawberry.scalar() returns a value, so using the bare name in an annotation
+# ("Optional[Date]") reads as a variable rather than a type. Wrapping it in
+# Annotated[date, ...] type-checks but makes Strawberry re-derive the scalar's
+# description, changing the published schema — so alias it for the checker
+# instead and leave the runtime definition exactly as it was.
+if TYPE_CHECKING:
+    Date = date
+else:
+    Date = strawberry.scalar(
+        date,
+        name="Date",
+        description="ISO 8601 date string (YYYY-MM-DD)",
+        serialize=lambda v: v.isoformat(),
+        parse_value=lambda v: date.fromisoformat(v),
+    )
 
 
 # ── 3. Interface ──────────────────────────────────────────────────────────────
@@ -105,15 +113,15 @@ SearchResult = Annotated[
 # ── 6. In-memory data ─────────────────────────────────────────────────────────
 
 _ARTICLES: list[Article] = [
-    Article(id="a1", title="GraphQL Basics",   status=PublishStatus.PUBLISHED,
+    Article(id=strawberry.ID("a1"), title="GraphQL Basics",   status=PublishStatus.PUBLISHED,
             body="GraphQL is...", genre=Genre.NON_FICTION,
             published_at=date(2024, 1, 15)),
-    Article(id="a2", title="Draft Post",        status=PublishStatus.DRAFT,
+    Article(id=strawberry.ID("a2"), title="Draft Post",        status=PublishStatus.DRAFT,
             body="WIP...", genre=Genre.SCIENCE),
 ]
 
 _VIDEOS: list[Video] = [
-    Video(id="v1", title="Intro to Strawberry", status=PublishStatus.PUBLISHED,
+    Video(id=strawberry.ID("v1"), title="Intro to Strawberry", status=PublishStatus.PUBLISHED,
           url="https://example.com/v1", duration_seconds=600,
           published_at=date(2024, 3, 20)),
 ]
