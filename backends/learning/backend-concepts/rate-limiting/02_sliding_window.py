@@ -68,7 +68,7 @@ def is_allowed(identifier: str, now: float | None = None) -> tuple[bool, int]:
         now = time.time()
     key = f"rl:sliding:{identifier}"
     member = f"{now}:{uuid.uuid4()}"
-    count = int(_script(keys=[key], args=[now, WINDOW, member, LIMIT]))
+    count = int(redis_rl.sync(_script(keys=[key], args=[now, WINDOW, member, LIMIT])))
     return count <= LIMIT, count
 
 

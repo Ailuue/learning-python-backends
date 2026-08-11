@@ -76,7 +76,7 @@ def is_allowed(identifier: str, now: float | None = None) -> tuple[bool, int]:
         now = time.time()
     ws = window_start(now, WINDOW)
     key = f"rl:fixed:{identifier}:{ws}"
-    count = int(_script(keys=[key], args=[WINDOW]))
+    count = int(redis_rl.sync(_script(keys=[key], args=[WINDOW])))
     return count <= LIMIT, count
 
 

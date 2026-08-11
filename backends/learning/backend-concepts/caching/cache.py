@@ -10,6 +10,8 @@ Key naming convention:
 
 import json
 import os
+from collections.abc import Awaitable
+from typing import Any, cast
 
 import redis
 from dotenv import load_dotenv
@@ -21,6 +23,19 @@ _client: redis.Redis = redis.Redis(
     port=int(os.environ.get("REDIS_PORT", 6379)),
     decode_responses=True,
 )
+
+
+def _sync(value: "Awaitable[Any] | Any") -> Any:
+    """
+    Narrow a redis reply to its synchronous form.
+
+    redis-py annotates every command as ResponseT = Awaitable[Any] | Any, because
+    the sync and async clients share one command mixin. _client is the sync one,
+    so the Awaitable arm never occurs — assert that here rather than at every
+    call site below.
+    """
+    return cast(Any, value)
+
 
 # TTL values kept short so demo output stays readable.
 # In production these would be minutes to hours.
@@ -71,7 +86,7 @@ def deserialise(raw: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def get(key: str) -> str | None:
-    return _client.get(key)
+    return _sync(_client.get(key))
 
 def setex(key: str, ttl: int, value: str) -> None:
     _client.setex(key, ttl, value)
@@ -80,7 +95,7 @@ def delete(*keys: str) -> None:
     _client.delete(*keys)
 
 def ttl(key: str) -> int:
-    return _client.ttl(key)
+    return _sync(_client.ttl(key))
 
 def exists(key: str) -> bool:
     return bool(_client.exists(key))
@@ -92,13 +107,13 @@ def rpush(key: str, value: str) -> None:
     _client.rpush(key, value)
 
 def lrange(key: str, start: int, end: int) -> list[str]:
-    return _client.lrange(key, start, end)
+    return _sync(_client.lrange(key, start, end))
 
 def ltrim(key: str, start: int, end: int) -> None:
     _client.ltrim(key, start, end)
 
 def llen(key: str) -> int:
-    return _client.llen(key)
+    return _sync(_client.llen(key))
 
 def set_nx(key: str, value: str, ex: int) -> bool:
     """SET key value NX EX ex — returns True if key was set (lock acquired)."""

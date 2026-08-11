@@ -82,7 +82,7 @@ def check_rate_limit(identifier: str, limit: int, window: int) -> tuple[bool, in
     """Returns (allowed, current_count)."""
     key = f"rl:sliding:{identifier}"
     member = f"{time.time()}:{uuid.uuid4()}"
-    count = int(_script(keys=[key], args=[time.time(), window, member]))
+    count = int(redis_rl.sync(_script(keys=[key], args=[time.time(), window, member])))
     return count <= limit, count
 
 
@@ -111,9 +111,16 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         config = ROUTE_LIMITS.get(request.url.path, DEFAULT_LIMIT)
 
-        # Use X-Forwarded-For if behind a proxy, otherwise fall back to host
+        # Use X-Forwarded-For if behind a proxy, otherwise fall back to host.
+        # request.client is None when there is no peer address (a unix socket, or
+        # Starlette's TestClient), so don't reach through it unguarded.
         forwarded = request.headers.get("X-Forwarded-For")
-        client_ip = forwarded.split(",")[0].strip() if forwarded else request.client.host
+        if forwarded:
+            client_ip = forwarded.split(",")[0].strip()
+        elif request.client:
+            client_ip = request.client.host
+        else:
+            client_ip = "unknown"
 
         identifier = f"{client_ip}:{request.url.path}"
         allowed, count = check_rate_limit(identifier, config.limit, config.window)

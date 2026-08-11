@@ -93,8 +93,9 @@ def is_allowed(identifier: str, now: float | None = None) -> tuple[bool, int]:
         now = time.time()
     tokens_key = f"rl:bucket:{identifier}:tokens"
     last_key = f"rl:bucket:{identifier}:last"
-    result = _script(keys=[tokens_key, last_key],
-                     args=[CAPACITY, RATE, COST, now, _TTL])
+    result = redis_rl.sync(
+        _script(keys=[tokens_key, last_key], args=[CAPACITY, RATE, COST, now, _TTL])
+    )
     return bool(int(result[0])), int(result[1])
 
 

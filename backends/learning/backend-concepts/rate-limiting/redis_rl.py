@@ -9,6 +9,8 @@ Key naming convention:
 """
 
 import os
+from collections.abc import Awaitable
+from typing import Any, cast
 
 import redis
 from dotenv import load_dotenv
@@ -20,6 +22,17 @@ client: redis.Redis = redis.Redis(
     port=int(os.environ.get("REDIS_PORT", 6379)),
     decode_responses=True,
 )
+
+
+def sync(value: "Awaitable[Any] | Any") -> Any:
+    """
+    Narrow a redis reply to its synchronous form.
+
+    redis-py annotates every command (and registered Lua script) as
+    ResponseT = Awaitable[Any] | Any, because the sync and async clients share one
+    command mixin. `client` is the sync one, so the Awaitable arm never occurs.
+    """
+    return cast(Any, value)
 
 
 def flush() -> None:
