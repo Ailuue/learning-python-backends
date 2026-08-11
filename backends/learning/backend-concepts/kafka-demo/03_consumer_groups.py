@@ -62,7 +62,7 @@ def run_consumer(name: str, group_id: str, results: list, max_messages: int = 5)
         group_id=group_id,
         auto_offset_reset="earliest",
         enable_auto_commit=True,
-        value_deserializer=lambda v: json.loads(v.decode()),
+        value_deserializer=lambda v: json.loads(v.decode()) if v else None,
         consumer_timeout_ms=4000,
     )
     for message in consumer:

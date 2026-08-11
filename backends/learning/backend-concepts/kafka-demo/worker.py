@@ -109,7 +109,7 @@ def main():
             group_id=GROUP_ID,
             auto_offset_reset="earliest",
             enable_auto_commit=False,   # manual commit after processing
-            value_deserializer=lambda v: json.loads(v.decode()),
+            value_deserializer=lambda v: json.loads(v.decode()) if v else None,
             key_deserializer=lambda k: k.decode() if k else None,
         )
     except NoBrokersAvailable:

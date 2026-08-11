@@ -63,7 +63,10 @@ async def lifespan(app: FastAPI):
         producer = KafkaProducer(
             bootstrap_servers=BOOTSTRAP,
             value_serializer=lambda v: json.dumps(v).encode(),
-            key_serializer=lambda k: k.encode() if k else None,
+            # A None key is meaningful to Kafka (no key -> round-robin partitioning),
+        # but typeshed's kafka-python stub types the serializer as returning bytes.
+        # pyright: ignore is the right call here — b"" would change partitioning.
+        key_serializer=lambda k: str(k).encode() if k else None,  # pyright: ignore[reportArgumentType]
             acks="all",
             retries=3,
         )

@@ -66,7 +66,10 @@ def produce_keyed(events: list[tuple[str, dict]]) -> list[tuple[str, int, int]]:
     producer = KafkaProducer(
         bootstrap_servers=BOOTSTRAP,
         value_serializer=lambda v: json.dumps(v).encode(),
-        key_serializer=lambda k: k.encode() if k else None,
+        # A None key is meaningful to Kafka (no key -> round-robin partitioning),
+        # but typeshed's kafka-python stub types the serializer as returning bytes.
+        # pyright: ignore is the right call here — b"" would change partitioning.
+        key_serializer=lambda k: str(k).encode() if k else None,  # pyright: ignore[reportArgumentType]
     )
     results = []
     for key, value in events:
@@ -126,11 +129,12 @@ def main():
     # ------------------------------------------------------------------
     print("\n--- 3. Consuming from a specific partition ---")
     print("    Assigning directly to partition 0 (bypasses consumer group balancing)")
-    from kafka import TopicPartition
+    # Exported by kafka-python at runtime; typeshed's bundled stub predates it.
+    from kafka import TopicPartition  # pyright: ignore[reportAttributeAccessIssue]
     consumer = KafkaConsumer(
         bootstrap_servers=BOOTSTRAP,
         auto_offset_reset="earliest",
-        value_deserializer=lambda v: json.loads(v.decode()),
+        value_deserializer=lambda v: json.loads(v.decode()) if v else None,
         key_deserializer=lambda k: k.decode() if k else None,
         consumer_timeout_ms=2000,
     )

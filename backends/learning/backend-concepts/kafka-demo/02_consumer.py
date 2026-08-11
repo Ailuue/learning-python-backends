@@ -53,7 +53,7 @@ def make_consumer(group_id: str, from_beginning: bool = True) -> KafkaConsumer:
         group_id=group_id,
         auto_offset_reset="earliest" if from_beginning else "latest",
         enable_auto_commit=False,   # manual commit — we control exactly when
-        value_deserializer=lambda v: json.loads(v.decode()),
+        value_deserializer=lambda v: json.loads(v.decode()) if v else None,
         key_deserializer=lambda k: k.decode() if k else None,
         consumer_timeout_ms=3000,   # stop polling after 3s of no messages (for demo)
     )
