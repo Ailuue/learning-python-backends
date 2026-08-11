@@ -1,5 +1,48 @@
 # Lessons
 
+## 2026-08-11 — A type fix that changes runtime output is not a type fix
+
+**Expected:** replacing `Date = strawberry.scalar(date, …)` with
+`Annotated[date, strawberry.scalar(date, …)]` in `graphql-concepts/04_types`
+would satisfy pyright and leave the schema alone. It is the form Strawberry's
+own docs show, and the tests passed.
+
+**What happened:** the published SDL changed. Strawberry re-derived the scalar's
+description from the serializer, so `"""ISO 8601 date string (YYYY-MM-DD)"""`
+became `"""Date (isoformat)"""`. Nothing failed — 10 tests still passed — and it
+would have shipped as a silent API change if I hadn't diffed the schema.
+
+**Next time:** when a typing change touches something that *generates* an
+artifact — a GraphQL schema, an ORM's DDL, a serializer, a migration — capture
+that artifact before and after and diff it. Tests assert behaviour the author
+thought to check; a diff catches everything else. The eventual fix was to alias
+`Date = date` under `TYPE_CHECKING` and leave the runtime definition untouched,
+which is uglier and correct. I did the same before/after diff on the
+`pgvector-demo` model rewrite (`Column()` → `Mapped[]`) and confirmed the
+generated DDL was byte-identical.
+
+## 2026-08-11 — Installing type stubs found real bugs; three checkers disagreed about kafka
+
+**Expected:** `celery-types` would be a suppression by another name — quieting
+25 `.delay`/`.s`/`.si` errors without saying anything true.
+
+**What happened:** it cleared all 25 *and* surfaced two genuine bugs underneath
+that the noise had been hiding: `apply_async(args=[...])` should take a tuple,
+and `AsyncResult.traceback` is the formatted string the backend stored, not a
+live `TracebackType`. Proper stubs are the opposite of a suppression.
+
+**The counter-example, same session:** `kafka-python` 3.0.10 ships 18 `.pyi`
+files but no `py.typed` marker, so pyright ignores them entirely and falls back
+to typeshed's bundled 2.x-era stubs. That produced three *false* errors
+(`TopicPartition` doesn't exist; a `None` key isn't allowed) — and, mixed in,
+one real one: the value deserializers called `.decode()` unconditionally, so a
+tombstone record would crash the consumer.
+
+**Next time:** check for `py.typed` before trusting or fighting a package's
+types. And don't assume a cluster of errors from one library is all noise or all
+real — this session had a cluster that was all real (celery) and a cluster that
+was mostly false with one real bug inside it (kafka).
+
 ## 2026-08-10 — Demo scripts default to a `postgres` role this machine doesn't have
 
 **Expected:** run any `database-concepts` demo directly after `pg_isready` came back green.
