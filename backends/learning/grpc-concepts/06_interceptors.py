@@ -83,8 +83,10 @@ class LoggingInterceptor(grpc.ServerInterceptor):
                 log.info(f"  [log] {method}  ERROR  {elapsed:.1f}ms  {exc}")
                 raise
 
-        # Rebuild the handler with the wrapped function
-        return handler._replace(unary_unary=timed_fn)
+        # Rebuild the handler with the wrapped function. The concrete handler is a
+        # NamedTuple (grpc._utilities._RpcMethodHandler), so _replace exists — but
+        # the RpcMethodHandler interface grpc exposes for typing does not declare it.
+        return handler._replace(unary_unary=timed_fn)  # pyright: ignore[reportAttributeAccessIssue]
 
 
 # ---------------------------------------------------------------------------
@@ -133,7 +135,9 @@ class TokenInjectorInterceptor(grpc.UnaryUnaryClientInterceptor):
         # Merge the token into existing metadata (if any)
         existing = list(client_call_details.metadata or [])
         existing.append(("authorization", self._token))
-        new_details = client_call_details._replace(metadata=existing)
+        # Same story on the client side: the details object gRPC hands an
+        # interceptor is a NamedTuple, but ClientCallDetails is an ABC.
+        new_details = client_call_details._replace(metadata=existing)  # pyright: ignore[reportAttributeAccessIssue]
         return continuation(new_details, request)
 
 
