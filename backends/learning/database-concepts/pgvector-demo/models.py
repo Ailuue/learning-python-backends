@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 # nomic-embed-text produces 768-dimensional vectors
@@ -14,12 +16,17 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String(50), nullable=False, unique=True)
-    email = Column(String(200), nullable=False, unique=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    # Mapped[...] + mapped_column is the SQLAlchemy 2.0 declarative style. The
+    # generated table is identical to bare Column(), but attribute access on an
+    # instance is typed as the Python value rather than as Column[...].
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String(200), nullable=False, unique=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
 
-    comments = relationship(
+    comments: Mapped[list["Comment"]] = relationship(
         "Comment", back_populates="user", cascade="all, delete-orphan"
     )
 
@@ -30,14 +37,18 @@ class User(Base):
 class Comment(Base):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    body = Column(Text, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
     # NULL until embed_comments.py is run
-    embedding = Column(Vector(EMBEDDING_DIM), nullable=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    embedding: Mapped[list[float] | None] = mapped_column(
+        Vector(EMBEDDING_DIM), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
 
-    user = relationship("User", back_populates="comments")
+    user: Mapped["User"] = relationship("User", back_populates="comments")
 
     def __repr__(self):
         return f"<Comment(id={self.id}, user_id={self.user_id})>"

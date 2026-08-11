@@ -25,7 +25,8 @@ EMBEDDING_DIM = 768
 
 def get_embedding(text: str, model: str) -> list[float]:
     response = ollama.embed(model=model, input=text)
-    vector = response.embeddings[0]
+    # ollama types embeddings as Sequence[float]; the column wants a list.
+    vector = list(response.embeddings[0])
     if len(vector) != EMBEDDING_DIM:
         raise ValueError(
             f"Model '{model}' returned {len(vector)}-dim vectors, "
