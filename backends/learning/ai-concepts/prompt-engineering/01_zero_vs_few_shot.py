@@ -59,7 +59,10 @@ def chat(provider: str, system: str, user: str) -> str:
             {"role": "user", "content": user},
         ],
     )
-    return r.choices[0].message.content.strip()
+    content = r.choices[0].message.content
+    if content is None:
+        raise RuntimeError("model returned no text content")
+    return content.strip()
 
 
 def main() -> None:

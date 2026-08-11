@@ -57,7 +57,10 @@ def chat(provider: str, prompt: str) -> str:
         max_tokens=512,
         messages=[{"role": "user", "content": prompt}],
     )
-    return r.choices[0].message.content.strip()
+    content = r.choices[0].message.content
+    if content is None:
+        raise RuntimeError("model returned no text content")
+    return content.strip()
 
 
 def main() -> None:

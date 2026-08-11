@@ -45,13 +45,16 @@ def embed_openai(texts: list[str]) -> list[list[float]]:
 def embed_voyage(texts: list[str]) -> list[list[float]]:
     import voyageai
 
-    vo = voyageai.Client()  # reads VOYAGE_API_KEY
+    # voyageai ships no __all__, so pyright reads Client as a private import.
+    vo = voyageai.Client()  # pyright: ignore[reportPrivateImportUsage]  # reads VOYAGE_API_KEY
     result = vo.embed(
         texts,
         model=os.environ.get("VOYAGE_EMBED_MODEL", "voyage-3"),
         input_type="document",
     )
-    return result.embeddings
+    # embeddings is List[List[float]] | List[List[int]] because voyage can return
+    # int8 vectors; the default output dtype is float, which is what we ask for.
+    return [[float(x) for x in vec] for vec in result.embeddings]
 
 
 def main() -> None:

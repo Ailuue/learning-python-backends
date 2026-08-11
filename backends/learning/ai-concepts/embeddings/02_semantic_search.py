@@ -47,10 +47,14 @@ def embed(provider: str, texts: list[str]) -> list[list[float]]:
 
     import voyageai
 
-    vo = voyageai.Client()
-    return vo.embed(
+    # voyageai ships no __all__, so pyright reads Client as a private import.
+    vo = voyageai.Client()  # pyright: ignore[reportPrivateImportUsage]
+    vectors = vo.embed(
         texts, model=os.environ.get("VOYAGE_EMBED_MODEL", "voyage-3"), input_type="document"
     ).embeddings
+    # embeddings is List[List[float]] | List[List[int]] because voyage can return
+    # int8 vectors; the default output dtype is float, which is what we ask for.
+    return [[float(x) for x in vec] for vec in vectors]
 
 
 def search(provider: str) -> None:
