@@ -39,10 +39,11 @@ def dollars(provider: str, in_tok: int, out_tok: int) -> float:
 
 def run_anthropic() -> None:
     import anthropic
+    from anthropic.types import MessageParam
 
     client = anthropic.Anthropic()
     model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8")
-    messages = [{"role": "user", "content": PROMPT}]
+    messages: list[MessageParam] = [{"role": "user", "content": PROMPT}]
 
     # Pre-flight: ask the API exactly how many input tokens this will be.
     pre = client.messages.count_tokens(model=model, messages=messages)
@@ -66,6 +67,8 @@ def run_openai() -> None:
         model=model, messages=[{"role": "user", "content": PROMPT}]
     )
     u = resp.usage
+    if u is None:
+        raise RuntimeError("response carried no usage block")
     print(f"actual: in={u.prompt_tokens} out={u.completion_tokens}")
     print(f"estimated cost: ${dollars('openai', u.prompt_tokens, u.completion_tokens):.6f}")
 

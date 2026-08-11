@@ -23,12 +23,15 @@ TURN_2 = "Could it ever slow things down?"  # 'it' only makes sense if turn 1 is
 
 def run_anthropic() -> None:
     import anthropic
+    from anthropic.types import MessageParam
 
     client = anthropic.Anthropic()
     model = os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8")
 
     # Anthropic: system is a TOP-LEVEL parameter, not a message.
-    history = [{"role": "user", "content": TURN_1}]
+    # Annotate the history so appends below stay typed as MessageParam rather
+    # than collapsing to dict[str, str].
+    history: list[MessageParam] = [{"role": "user", "content": TURN_1}]
     r1 = client.messages.create(model=model, max_tokens=1024, system=SYSTEM, messages=history)
     a1 = "".join(b.text for b in r1.content if b.type == "text")
     print("A1:", a1)
@@ -42,17 +45,20 @@ def run_anthropic() -> None:
 
 def run_openai() -> None:
     from openai import OpenAI
+    from openai.types.chat import ChatCompletionMessageParam
 
     client = OpenAI()
     model = os.environ.get("OPENAI_MODEL", "gpt-4o")
 
     # OpenAI: system is the FIRST message in the list (role="system").
-    history = [
+    history: list[ChatCompletionMessageParam] = [
         {"role": "system", "content": SYSTEM},
         {"role": "user", "content": TURN_1},
     ]
     r1 = client.chat.completions.create(model=model, messages=history)
     a1 = r1.choices[0].message.content
+    if a1 is None:
+        raise RuntimeError("model returned no text content")
     print("A1:", a1)
 
     history.append({"role": "assistant", "content": a1})

@@ -43,7 +43,11 @@ def call_openai() -> str:
         messages=[{"role": "user", "content": PROMPT}],
     )
     # OpenAI returns one or more "choices"; the text is on the first choice.
-    return resp.choices[0].message.content
+    # content is None on a refusal or a tool-call-only reply, so check it.
+    content = resp.choices[0].message.content
+    if content is None:
+        raise RuntimeError("model returned no text content")
+    return content
 
 
 def main() -> None:
