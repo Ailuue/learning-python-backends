@@ -105,9 +105,9 @@ Free tier: unlimited pulls for public repos, 500 MB storage + 1 GB transfer free
 Image names follow this pattern:
   ghcr.io/<github-owner>/<repo-name>/<image-name>:<tag>
 
-For this repo (Ailuue/learning-python-backends):
-  ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
-  ghcr.io/ailuue/learning-python-backends/docker-cicd:sha-abc1234
+For this repo (alexvervloet/learning-python-backends):
+  ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
+  ghcr.io/alexvervloet/learning-python-backends/docker-cicd:sha-abc1234
 
 Authentication:
   GITHUB_TOKEN is automatically provided by GitHub Actions.
@@ -115,8 +115,8 @@ Authentication:
   No manual secrets needed.
 
 Pull a built image locally:
-  docker pull ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
-  docker run -p 8000:8000 ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
+  docker pull ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
+  docker run -p 8000:8000 ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
   curl localhost:8000/version   # build_sha matches the commit
 
 ### CACHING: type=gha vs type=registry
@@ -137,8 +137,8 @@ type=registry  (Registry-based Cache):
   Slower than type=gha (registry download vs GitHub cache).
   Useful if you want a local build to reuse CI's cache layers.
 
-  cache-from: type=registry,ref=ghcr.io/ailuue/learning-python-backends/docker-cicd:cache
-  cache-to:   type=registry,ref=ghcr.io/ailuue/learning-python-backends/docker-cicd:cache,mode=max
+  cache-from: type=registry,ref=ghcr.io/alexvervloet/learning-python-backends/docker-cicd:cache
+  cache-to:   type=registry,ref=ghcr.io/alexvervloet/learning-python-backends/docker-cicd:cache,mode=max
 
 Use type=gha unless you need cross-environment cache sharing.
 
@@ -158,12 +158,12 @@ mode=max:
 ### IMAGE TAGS vs DIGESTS
 
 Tag (mutable):
-  ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
+  ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
   "latest" can be rewritten on every push. There's no guarantee that
   the "latest" you deployed yesterday is the same as "latest" today.
 
 Digest (immutable):
-  ghcr.io/ailuue/learning-python-backends/docker-cicd@sha256:abc123...
+  ghcr.io/alexvervloet/learning-python-backends/docker-cicd@sha256:abc123...
   This is a content-addressable hash of the exact image layers.
   It will NEVER change. Pull the same digest in 6 months → same binary.
 
@@ -191,12 +191,12 @@ and only the final layers change when the SHA changes.
      git add .github/workflows/docker-cicd.yml backends/docker-cicd/
      git commit -m "feat: add CI/CD pipeline for docker-cicd app"
      git push
-   Open: https://github.com/Ailuue/learning-python-backends/actions
+   Open: https://github.com/alexvervloet/learning-python-backends/actions
    Watch the "Docker Build & Push" workflow run.
 
 2. Pull and run the CI-built image:
-     docker pull ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
-     docker run -p 8000:8000 ghcr.io/ailuue/learning-python-backends/docker-cicd:latest
+     docker pull ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
+     docker run -p 8000:8000 ghcr.io/alexvervloet/learning-python-backends/docker-cicd:latest
      curl localhost:8000/version
    Compare build_sha to the SHA of your commit on GitHub.
 
@@ -215,7 +215,7 @@ and only the final layers change when the SHA changes.
 
 6. Make the image private vs public:
    After the first push, go to your package on GitHub:
-   https://github.com/Ailuue?tab=packages
+   https://github.com/alexvervloet?tab=packages
    By default it may be private. You can make it public there.
 
 ### WHERE TO GO NEXT

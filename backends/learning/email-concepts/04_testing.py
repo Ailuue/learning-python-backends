@@ -116,7 +116,10 @@ class TestSendPasswordReset(unittest.TestCase):
     def test_reset_link_in_body(self, MockSMTP):
         token = "tok_secret_xyz"
         msg = send_password_reset("localhost", 1025, "user@example.com", token)
-        body = msg.get_body(preferencelist=("plain",)).get_content()
+        part = msg.get_body(preferencelist=("plain",))
+        self.assertIsNotNone(part, "message has no text/plain part")
+        assert part is not None  # narrows for the type checker
+        body = part.get_content()
         self.assertIn(token, body)
         self.assertIn("https://example.com/reset", body)
 

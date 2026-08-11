@@ -14,6 +14,7 @@ import logging
 import os
 import uuid
 from contextlib import contextmanager
+from typing import cast
 
 import psycopg2
 import redis as redis_lib
@@ -117,7 +118,9 @@ def list_items():
     The 'source' field tells you which path was taken — watch it change
     on the first request after cache expiry (CACHE_TTL seconds).
     """
-    cached = _redis.get(ITEMS_CACHE_KEY)
+    # redis-py types every command as Awaitable[Any] | Any because the sync and
+    # async clients share a command mixin; _redis is the sync one.
+    cached = cast(str | None, _redis.get(ITEMS_CACHE_KEY))
     if cached:
         return {"items": json.loads(cached), "source": "cache"}
 

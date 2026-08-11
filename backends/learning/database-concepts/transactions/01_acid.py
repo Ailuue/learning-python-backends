@@ -77,7 +77,9 @@ def demo_atomicity_failure() -> None:
         conn.commit()
     except psycopg2.errors.CheckViolation as e:
         conn.rollback()
-        print(f"Transaction rolled back: {e.pgerror.strip()}\n")
+        # pgerror is Optional on the exception; every CheckViolation from the
+        # server carries one, but fall back rather than crash the handler.
+        print(f"Transaction rolled back: {(e.pgerror or str(e)).strip()}\n")
 
     conn.close()
 
@@ -105,7 +107,7 @@ def demo_consistency() -> None:
         conn.commit()
     except psycopg2.errors.CheckViolation as e:
         conn.rollback()
-        print(f"Rejected: {e.pgerror.strip()}\n")
+        print(f"Rejected: {(e.pgerror or str(e)).strip()}\n")
     conn.close()
 
     print("The CHECK constraint is not optional — it fires whether the bad value")
