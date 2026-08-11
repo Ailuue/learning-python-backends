@@ -105,8 +105,10 @@ def main():
     print(f"   State: {p2.state}")
     # p2.result holds the exception object after FAILURE
     print(f"   .result (exception): {p2.result}")
-    # Traceback is also stored:
-    print(f"   .traceback (first line): {p2.traceback.splitlines()[0] if p2.traceback else None}")
+    # Traceback is also stored. The stubs type it as TracebackType, but the result
+    # backend stores the formatted string, so read it as text.
+    tb = str(p2.traceback) if p2.traceback else None
+    print(f"   .traceback (first line): {tb.splitlines()[0] if tb else None}")
 
     # --- Custom terminal state ---
     print("\n3. Custom terminal state via Ignore():")

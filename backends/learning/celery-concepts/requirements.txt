@@ -1,2 +1,6 @@
 celery[redis]==5.4.0
 redis==5.0.8
+
+# Type stubs only — Celery ships none, so without these every .delay/.s/.si
+# reads as an unknown attribute on a plain function.
+celery-types==0.26.0

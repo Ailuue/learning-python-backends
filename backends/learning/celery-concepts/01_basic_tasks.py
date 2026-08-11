@@ -79,7 +79,7 @@ def main():
 
     # --- apply_async with options ---
     print("\n3. apply_async with countdown (runs after 5 seconds):")
-    promise2 = slow_add.apply_async(args=[7, 3], countdown=5)
+    promise2 = slow_add.apply_async(args=(7, 3), countdown=5)
     print(f"   Task ID: {promise2.id}")
     print("   Waiting for result (will take ~8s total: 5s delay + 3s work)...")
     result2 = promise2.get(timeout=15)
