@@ -32,3 +32,16 @@ class User(SQLModel, table=True):
         cascade="all, delete-orphan",
     )
     tags: list["Tag"] = Relationship(back_populates="user", cascade_delete=True)
+
+    @property
+    def pk(self) -> int:
+        """
+        The primary key, typed non-Optional.
+
+        `id` is `int | None` only because SQLModel assigns it on flush — a user
+        loaded from the database always has one. Routes that pass the id into a
+        foreign key should use this rather than spreading `assert` over call sites.
+        """
+        if self.id is None:
+            raise RuntimeError("user has not been persisted yet")
+        return self.id

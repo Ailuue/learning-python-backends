@@ -28,7 +28,7 @@ def create_category(
     category = Category(
         name=category_in.name,
         description=category_in.description,
-        user_id=user.id,
+        user_id=user.pk,
     )
     session.add(category)
     session.commit()

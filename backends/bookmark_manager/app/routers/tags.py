@@ -18,7 +18,7 @@ def create_tag(tag_in: TagCreate, user: CurrentUserDep, session: SessionDep) -> 
     ).first()
     if existing:
         return existing
-    tag = Tag(name=tag_in.name, user_id=user.id)
+    tag = Tag(name=tag_in.name, user_id=user.pk)
     session.add(tag)
     session.commit()
     session.refresh(tag)

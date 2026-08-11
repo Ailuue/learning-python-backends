@@ -48,7 +48,7 @@ def create_bookmark(
 ) -> Bookmark:
     # An authenticated user is always persisted, so its primary key is set.
     assert user.id is not None
-    _validate_category(session, user.id, bookmark_in.category_id)
+    _validate_category(session, user.pk, bookmark_in.category_id)
 
     url_str = str(bookmark_in.url)
     bookmark = Bookmark(
@@ -65,7 +65,7 @@ def create_bookmark(
     # the bookmark is already known to the session.
     session.add(bookmark)
     for tag_name in bookmark_in.tags:
-        bookmark.tags.append(_get_or_create_tag(session, user.id, tag_name))
+        bookmark.tags.append(_get_or_create_tag(session, user.pk, tag_name))
 
     session.commit()
     session.refresh(bookmark)
@@ -123,7 +123,7 @@ def update_bookmark(
     if "url" in update_data:
         update_data["url"] = str(update_data["url"])
     if "category_id" in update_data:
-        _validate_category(session, user.id, update_data["category_id"])
+        _validate_category(session, user.pk, update_data["category_id"])
 
     for field, value in update_data.items():
         setattr(bookmark, field, value)
@@ -132,7 +132,7 @@ def update_bookmark(
     if bookmark_in.tags is not None:
         bookmark.tags.clear()
         for tag_name in bookmark_in.tags:
-            bookmark.tags.append(_get_or_create_tag(session, user.id, tag_name))
+            bookmark.tags.append(_get_or_create_tag(session, user.pk, tag_name))
 
     session.add(bookmark)
     session.commit()
