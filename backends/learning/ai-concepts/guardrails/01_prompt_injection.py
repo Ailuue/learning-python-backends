@@ -51,25 +51,37 @@ def _send(provider: str, system: str | None, user: str) -> str:
         import anthropic
 
         client = anthropic.Anthropic()
-        kwargs = {"system": system} if system else {}
+        # anthropic.omit is the SDK's "parameter not supplied" sentinel. Splatting a
+        # **kwargs dict here instead makes the checker test str against every keyword
+        # messages.create accepts.
         r = client.messages.create(
             model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-8"),
             max_tokens=256,
+            system=system if system else anthropic.omit,
             messages=[{"role": "user", "content": user}],
-            **kwargs,
         )
         return "".join(b.text for b in r.content if b.type == "text").strip()
 
     from openai import OpenAI
+    from openai.types.chat import ChatCompletionMessageParam
 
     client = OpenAI()
-    messages = ([{"role": "system", "content": system}] if system else []) + [
-        {"role": "user", "content": user}
-    ]
+    # Annotate rather than letting the list infer as list[dict[str, str]] — the SDK
+    # wants the per-role TypedDicts, which a plain dict does not satisfy.
+    messages: list[ChatCompletionMessageParam] = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": user})
+
     r = client.chat.completions.create(
         model=os.environ.get("OPENAI_MODEL", "gpt-4o"), max_tokens=256, messages=messages
     )
-    return r.choices[0].message.content.strip()
+    content = r.choices[0].message.content
+    if content is None:
+        # Real behaviour, not a theoretical case: content is None on a refusal or
+        # when the model answers with tool calls only.
+        raise RuntimeError("model returned no text content")
+    return content.strip()
 
 
 def main() -> None:
